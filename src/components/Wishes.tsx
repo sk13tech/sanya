@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 import {
   ArrowRight,
   Compass,
@@ -62,16 +62,22 @@ export default function Wishes() {
   }, []);
 
   const { scrollYProgress } = useScroll({ target: sectionRef });
-  const x = useTransform(scrollYProgress, [0, 1], [0, -range]);
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 130,
+    damping: 32,
+    mass: 0.35,
+    restDelta: 0.001,
+  });
+  const x = useTransform(smoothProgress, [0, 1], [0, -range]);
 
   return (
     <section ref={sectionRef} className="relative h-[340vh]">
-      <div className="sticky top-0 flex h-[100svh] flex-col justify-center overflow-hidden">
+      <div className="wishes-screen sticky top-0 flex h-[100svh] flex-col justify-center overflow-hidden">
         <motion.div ref={trackRef} style={{ x }} className="flex w-max items-stretch gap-6 px-[7vw] will-change-transform sm:gap-8">
           {/* Intro cell */}
-          <div className="flex min-w-[78vw] flex-col justify-center sm:min-w-[38rem]">
+          <div className="wishes-intro flex min-w-[82vw] flex-col justify-center sm:min-w-[38rem]">
             <Eyebrow>if i could gift you anything</Eyebrow>
-            <h2 className="mt-8 text-5xl font-semibold leading-[1.02] tracking-tight text-stone-100 sm:text-7xl">
+            <h2 className="wishes-title mt-7 text-4xl font-semibold leading-[1.02] tracking-tight text-stone-100 sm:mt-8 sm:text-7xl">
               Six wishes,
               <br />
               <span className="gold-shimmer pr-2 font-display italic">wrapped in gold.</span>
@@ -86,7 +92,7 @@ export default function Wishes() {
           {WISHES.map((wish, i) => (
             <div
               key={wish.word}
-              className="group relative flex min-h-[62svh] w-[80vw] flex-col justify-between overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.035] p-8 backdrop-blur-xl transition-colors duration-500 hover:border-gold/30 sm:w-[26rem] sm:p-10"
+              className="wish-card group relative flex h-[68svh] max-h-[42rem] w-[82vw] shrink-0 flex-col justify-between overflow-y-auto overflow-x-hidden rounded-[1.6rem] border border-white/10 bg-white/[0.035] p-6 backdrop-blur-xl transition-colors duration-500 hover:border-gold/30 sm:w-[26rem] sm:rounded-[2rem] sm:p-10"
             >
               <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-gold/10 blur-3xl transition-opacity duration-700 group-hover:opacity-100 sm:opacity-60" />
               <div className="flex items-start justify-between">
@@ -98,7 +104,7 @@ export default function Wishes() {
                 </div>
               </div>
               <div>
-                <h3 className="text-4xl font-semibold tracking-tight text-stone-100 sm:text-5xl">
+                <h3 className="wish-title text-3xl font-semibold tracking-tight text-stone-100 sm:text-5xl">
                   {wish.word}
                 </h3>
                 <p className="mt-5 text-sm leading-relaxed text-stone-400 sm:text-[15px]">
@@ -113,7 +119,7 @@ export default function Wishes() {
           ))}
 
           {/* Outro cell */}
-          <div className="flex min-w-[70vw] flex-col items-start justify-center sm:min-w-[30rem]">
+          <div className="wishes-outro flex min-w-[78vw] flex-col items-start justify-center sm:min-w-[30rem]">
             <p className="font-display text-4xl italic leading-snug text-stone-300 sm:text-5xl">
               and one lifelong
               <br />
@@ -128,7 +134,7 @@ export default function Wishes() {
 
         {/* progress hairline */}
         <div className="pointer-events-none absolute bottom-10 left-1/2 h-px w-44 -translate-x-1/2 bg-white/10">
-          <motion.div style={{ scaleX: scrollYProgress }} className="h-full origin-left bg-gold/80" />
+          <motion.div style={{ scaleX: smoothProgress }} className="h-full origin-left bg-gold/80" />
         </div>
       </div>
     </section>

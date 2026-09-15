@@ -25,6 +25,10 @@ export default function GreetingCard() {
     setOpen(true);
     playPop(0.5);
     window.setTimeout(playSparkle, 260);
+    // bring the whole letter into view from its very top
+    window.setTimeout(() => {
+      ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 120);
     window.setTimeout(() => {
       confetti({
         particleCount: 70,
@@ -41,7 +45,7 @@ export default function GreetingCard() {
   return (
     <section
       ref={ref}
-      className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 py-32"
+      className="greeting-section relative flex min-h-[100svh] scroll-mt-0 flex-col items-center justify-center overflow-x-clip px-4 py-20 sm:px-6 sm:py-28"
     >
       {/* warm glow */}
       <div className="pointer-events-none absolute left-1/2 top-1/2 h-[75vmin] w-[95vmin] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(ellipse,rgba(230,195,122,0.1),rgba(255,185,205,0.05)_45%,transparent_70%)] blur-3xl" />
@@ -52,7 +56,7 @@ export default function GreetingCard() {
         initial={{ opacity: 0, y: 26, filter: "blur(10px)" }}
         animate={inView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
         transition={{ duration: 1, ease: EASE }}
-        className="relative mt-7 text-center text-4xl font-semibold leading-[1.05] tracking-tight text-stone-100 sm:text-6xl"
+        className="greeting-title relative mt-7 text-center text-4xl font-semibold leading-[1.05] tracking-tight text-stone-100 sm:text-6xl"
       >
         A letter I'd rather
         <span className="gold-shimmer block pr-2 font-display text-5xl italic leading-[1.1] sm:text-7xl">
@@ -61,7 +65,7 @@ export default function GreetingCard() {
       </motion.h2>
 
       {/* ── envelope / card ── */}
-      <div className="relative mt-16 w-full max-w-2xl" style={{ perspective: "1800px" }}>
+      <div className="greeting-card-wrap relative mt-12 w-full max-w-2xl sm:mt-16" style={{ perspective: "1800px" }}>
         <AnimatePresence mode="wait">
           {!open ? (
             <motion.button
@@ -129,7 +133,7 @@ export default function GreetingCard() {
               animate={{ opacity: 1, rotateX: 0, y: 0, scale: 1 }}
               transition={{ duration: 1.05, ease: EASE }}
               style={{ transformOrigin: "top center" }}
-              className="relative overflow-hidden rounded-[30px] border border-gold/25 bg-[linear-gradient(160deg,rgba(255,252,244,0.055),rgba(255,255,255,0.02))] p-8 backdrop-blur-xl shadow-[0_50px_120px_-35px_rgba(0,0,0,0.95)] sm:p-14"
+              className="relative overflow-hidden rounded-[24px] border border-gold/25 bg-[linear-gradient(160deg,rgba(255,252,244,0.055),rgba(255,255,255,0.02))] p-6 backdrop-blur-xl shadow-[0_50px_120px_-35px_rgba(0,0,0,0.95)] sm:rounded-[30px] sm:p-14"
             >
               {/* paper ornament */}
               <span className="pointer-events-none absolute inset-4 rounded-[22px] border border-dashed border-gold/15" />

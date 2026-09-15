@@ -6,6 +6,7 @@ import Backdrop from "./components/Backdrop";
 import CursorGlow from "./components/CursorGlow";
 import ProgressBar from "./components/ProgressBar";
 import TapHearts from "./components/TapHearts";
+import NoCopy from "./components/NoCopy";
 import IntroGate from "./components/IntroGate";
 import Loader from "./components/Loader";
 import Hero from "./components/Hero";
@@ -35,6 +36,7 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen bg-ink font-sans text-stone-100">
+      <NoCopy />
       {stage !== "gate" && <Backdrop />}
       <CursorGlow />
       <ProgressBar />

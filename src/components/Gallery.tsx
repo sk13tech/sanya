@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
+import { motion, useScroll, useSpring, useTransform, type MotionValue } from "framer-motion";
 import { Heart, MoveDown } from "lucide-react";
 import { PHOTOS, type Photo } from "../data/photos";
 import { HER_NAME } from "../config";
@@ -99,21 +99,27 @@ function Dot({ index, progress }: { index: number; progress: MotionValue<number>
 export default function Gallery() {
   const sectionRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: sectionRef });
-  const headOpacity = useTransform(scrollYProgress, [0, 0.04, 0.9, 1], [1, 1, 1, 0]);
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 130,
+    damping: 32,
+    mass: 0.35,
+    restDelta: 0.001,
+  });
+  const headOpacity = useTransform(smoothProgress, [0, 0.04, 0.9, 1], [1, 1, 1, 0]);
 
   return (
     <section ref={sectionRef} className="relative h-[280vh]">
-      <div className="sticky top-0 h-[100svh] overflow-hidden">
-        <div className="absolute inset-0 sm:inset-x-[12vw] sm:inset-y-[6vh] sm:overflow-hidden sm:rounded-[36px] sm:border sm:border-white/10">
+      <div className="gallery-screen sticky top-0 h-[100svh] overflow-hidden">
+        <div className="gallery-frame absolute inset-0 sm:inset-x-[12vw] sm:inset-y-[6vh] sm:overflow-hidden sm:rounded-[36px] sm:border sm:border-white/10">
           {PHOTOS.map((photo, i) => (
-            <Frame key={photo.src} photo={photo} index={i} progress={scrollYProgress} />
+            <Frame key={photo.src} photo={photo} index={i} progress={smoothProgress} />
           ))}
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_45%,rgba(7,5,16,0.75)_100%)]" />
         </div>
 
         <motion.div
           style={{ opacity: headOpacity, willChange: "opacity" }}
-          className="pointer-events-none absolute inset-x-0 top-[8vh] z-20 px-6 text-center"
+          className="gallery-heading pointer-events-none absolute inset-x-0 top-[max(1rem,8vh)] z-20 px-4 text-center sm:px-6"
         >
           <Eyebrow center>a little strip of us</Eyebrow>
           <h2 className="mt-5 text-3xl font-semibold leading-[1.08] tracking-tight text-stone-50 sm:text-5xl">
@@ -122,14 +128,14 @@ export default function Gallery() {
           </h2>
         </motion.div>
 
-        <div className="absolute inset-x-0 bottom-7 z-20 flex flex-col items-center gap-4">
+        <div className="gallery-guide absolute inset-x-0 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-20 flex flex-col items-center gap-3 px-3 sm:bottom-7 sm:gap-4">
           <div className="flex items-center gap-2.5">
             {PHOTOS.map((photo, i) => (
-              <Dot key={photo.src} index={i} progress={scrollYProgress} />
+              <Dot key={photo.src} index={i} progress={smoothProgress} />
             ))}
           </div>
 
-          <div className="flex items-center gap-2.5 rounded-full border border-gold/40 bg-ink/50 px-5 py-2.5 backdrop-blur-md">
+          <div className="flex max-w-full items-center gap-2.5 rounded-full border border-gold/40 bg-ink/60 px-4 py-2.5 backdrop-blur-md sm:px-5">
             <motion.span
               className="text-gold"
               animate={{ y: [-2, 3, -2] }}
@@ -137,7 +143,7 @@ export default function Gallery() {
             >
               <MoveDown className="h-3.5 w-3.5" strokeWidth={1.8} />
             </motion.span>
-            <span className="text-[9px] font-bold uppercase tracking-[0.32em] text-gold">
+            <span className="truncate text-[8px] font-bold uppercase tracking-[0.22em] text-gold sm:text-[9px] sm:tracking-[0.32em]">
               scroll — {HER_NAME}'s years fade by
             </span>
           </div>

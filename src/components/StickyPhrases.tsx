@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
+import { motion, useScroll, useSpring, useTransform, type MotionValue } from "framer-motion";
 import { HER_NAME } from "../config";
 
 type Phrase = {
@@ -56,7 +56,7 @@ function PhraseView({
   return (
     <motion.div
       style={{ opacity, y, filter: blur }}
-      className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center"
+      className="phrase-screen absolute inset-0 flex flex-col items-center justify-center px-5 text-center sm:px-6"
     >
       <span
         aria-hidden
@@ -64,10 +64,10 @@ function PhraseView({
       >
         {phrase.ghost}
       </span>
-      <p className="relative max-w-4xl text-balance text-3xl font-semibold leading-[1.18] tracking-tight text-stone-100 sm:text-5xl md:text-6xl">
+      <p className="phrase-main relative max-w-4xl text-balance text-3xl font-semibold leading-[1.18] tracking-tight text-stone-100 sm:text-5xl md:text-6xl">
         {phrase.main}
       </p>
-      <p className="gold-shimmer relative mt-5 pr-2 font-display text-4xl italic leading-[1.1] sm:text-6xl md:text-7xl">
+      <p className="phrase-accent gold-shimmer relative mt-5 pr-2 font-display text-4xl italic leading-[1.1] sm:text-6xl md:text-7xl">
         {phrase.accent}
       </p>
     </motion.div>
@@ -77,6 +77,12 @@ function PhraseView({
 export default function StickyPhrases() {
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref });
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 125,
+    damping: 31,
+    mass: 0.4,
+    restDelta: 0.001,
+  });
 
   return (
     <section ref={ref} className="relative h-[380vh]">
@@ -84,7 +90,7 @@ export default function StickyPhrases() {
         {PHRASES.map((p, i) => (
           <PhraseView
             key={p.ghost}
-            progress={scrollYProgress}
+            progress={smoothProgress}
             range={RANGES[i]}
             hold={i === PHRASES.length - 1}
             phrase={p}

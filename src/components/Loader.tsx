@@ -53,10 +53,11 @@ export default function Loader({ onDone }: { onDone: () => void }) {
 
   return (
     <motion.div
-      className="fixed inset-0 z-[90] flex flex-col items-center justify-center overflow-hidden bg-ink"
+      className="fixed inset-0 z-[90] flex items-center justify-center overflow-hidden bg-ink px-4"
       exit={{ opacity: 0, scale: 1.06, filter: "blur(14px)" }}
       transition={{ duration: 0.9, ease: EASE }}
     >
+      <div className="loader-content relative flex w-full flex-col items-center justify-center">
       {/* breathing aurora */}
       <motion.div
         aria-hidden
@@ -75,7 +76,7 @@ export default function Loader({ onDone }: { onDone: () => void }) {
       </motion.p>
 
       {/* ── magic counter ── */}
-      <div className="relative mt-4 flex h-64 w-64 items-center justify-center sm:h-72 sm:w-72">
+      <div className="loader-orbit relative mt-4 flex h-64 w-64 items-center justify-center sm:h-72 sm:w-72">
         <div className="slow-rot pointer-events-none absolute inset-0 rounded-full border border-dashed border-gold/20" />
         <div
           className="slow-rot pointer-events-none absolute inset-5 rounded-full border border-blush/15"
@@ -153,7 +154,7 @@ export default function Loader({ onDone }: { onDone: () => void }) {
             initial={{ y: 46, opacity: 0, scale: 0.8, filter: "blur(6px)" }}
             animate={{ y: 0, opacity: 1, scale: 1, filter: "blur(0px)" }}
             transition={{ duration: 0.38, ease: EASE }}
-            className="gold-shimmer block font-display text-[7.5rem] leading-none drop-shadow-[0_0_28px_rgba(230,195,122,0.35)]"
+            className="loader-number gold-shimmer block font-display text-[7.5rem] leading-none drop-shadow-[0_0_28px_rgba(230,195,122,0.35)]"
           >
             {n}
           </motion.span>
@@ -170,7 +171,7 @@ export default function Loader({ onDone }: { onDone: () => void }) {
       </motion.p>
 
       {/* ── real loading bar ── */}
-      <div className="relative mt-9 w-60 sm:w-72">
+      <div className="loader-progress relative mt-9 w-60 max-w-full sm:w-72">
         <div className="h-[3px] w-full overflow-hidden rounded-full bg-white/10">
           <motion.div
             className="h-full rounded-full bg-gradient-to-r from-gold-deep via-gold to-gold-soft shadow-[0_0_14px_rgba(230,195,122,0.6)]"
@@ -201,6 +202,7 @@ export default function Loader({ onDone }: { onDone: () => void }) {
         <p className="mt-1.5 text-center text-[8px] font-medium uppercase tracking-[0.3em] text-stone-700">
           {loaded} / {total} pieces of the night
         </p>
+      </div>
       </div>
     </motion.div>
   );
