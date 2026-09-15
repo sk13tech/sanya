@@ -9,8 +9,8 @@ const container: Variants = {
 };
 
 const item: Variants = {
-  hidden: { opacity: 0, y: 46, filter: "blur(12px)" },
-  show: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 1.15, ease: EASE } },
+  hidden: { opacity: 0, y: 46 },
+  show: { opacity: 1, y: 0, transition: { duration: 1.15, ease: EASE } },
 };
 
 export default function Hero({ ready }: { ready: boolean }) {
@@ -26,7 +26,6 @@ export default function Hero({ ready }: { ready: boolean }) {
   const contentOpacity = useTransform(smoothProgress, [0, 0.55], [1, 0]);
   const contentScale = useTransform(smoothProgress, [0, 1], [1, 1.28]);
   const contentY = useTransform(smoothProgress, [0, 1], ["0%", "-14%"]);
-  const contentBlur = useTransform(smoothProgress, [0, 0.55], ["blur(0px)", "blur(14px)"]);
   const bgScale = useTransform(smoothProgress, [0, 1], [1.12, 1.34]);
   const bgOpacity = useTransform(smoothProgress, [0, 0.9], [1, 0.12]);
   const hintOpacity = useTransform(smoothProgress, [0, 0.12], [1, 0]);
@@ -47,7 +46,7 @@ export default function Hero({ ready }: { ready: boolean }) {
 
         {/* Headline */}
         <motion.div
-          style={{ opacity: contentOpacity, scale: contentScale, y: contentY, filter: contentBlur }}
+          style={{ opacity: contentOpacity, scale: contentScale, y: contentY }}
           className="hero-content relative z-10 px-5 text-center will-change-transform sm:px-6"
         >
           <motion.div

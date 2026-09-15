@@ -1,5 +1,4 @@
-// Synthesized party sound effects — pure Web Audio API, no files.
-// party pops · confetti burst chimes · candle-blow whoosh · magic sparkle · photo shutter · page turn
+// Synthesized party effects — pure Web Audio API, no files.
 
 let ctx: AudioContext | null = null;
 let bus: GainNode | null = null;
@@ -14,17 +13,6 @@ function ac(): AudioContext {
   }
   ctx.resume().catch(() => undefined);
   return ctx;
-}
-
-/** Shared, already-unlocked audio context (user gestures have run through it). */
-export function sharedCtx(): AudioContext {
-  return ac();
-}
-
-/** Shared output bus for anything that wants to sing through the same graph. */
-export function sharedBus(): GainNode {
-  ac();
-  return bus!;
 }
 
 function noise(c: AudioContext): AudioBuffer {
@@ -136,7 +124,3 @@ export function playGreeting() {
   playPop(0.8);
   window.setTimeout(() => playPop(0.8), 140);
 }
-
-
-
-

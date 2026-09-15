@@ -54,7 +54,7 @@ export default function Loader({ onDone }: { onDone: () => void }) {
   return (
     <motion.div
       className="fixed inset-0 z-[90] flex items-center justify-center overflow-hidden bg-ink px-4"
-      exit={{ opacity: 0, scale: 1.06, filter: "blur(14px)" }}
+      exit={{ opacity: 0, scale: 1.06 }}
       transition={{ duration: 0.9, ease: EASE }}
     >
       <div className="loader-content relative flex w-full flex-col items-center justify-center">
@@ -151,8 +151,8 @@ export default function Loader({ onDone }: { onDone: () => void }) {
         <div className="absolute flex h-32 items-center justify-center">
           <motion.span
             key={n}
-            initial={{ y: 46, opacity: 0, scale: 0.8, filter: "blur(6px)" }}
-            animate={{ y: 0, opacity: 1, scale: 1, filter: "blur(0px)" }}
+            initial={{ y: 46, opacity: 0, scale: 0.8 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
             transition={{ duration: 0.38, ease: EASE }}
             className="loader-number gold-shimmer block font-display text-[7.5rem] leading-none drop-shadow-[0_0_28px_rgba(230,195,122,0.35)]"
           >

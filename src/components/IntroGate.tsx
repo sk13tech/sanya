@@ -30,7 +30,7 @@ export default function IntroGate({ onFinish }: { onFinish: () => void }) {
   return (
     <motion.div
       className="intro-gate fixed inset-0 z-[95] flex items-start justify-center overflow-x-hidden overflow-y-auto overscroll-contain bg-ink px-[max(1rem,env(safe-area-inset-left))]"
-      exit={{ opacity: 0, scale: 1.04, filter: "blur(14px)" }}
+      exit={{ opacity: 0, scale: 1.04 }}
       transition={{ duration: 0.9, ease: EASE }}
     >
       {/* ambient glows */}
@@ -38,8 +38,8 @@ export default function IntroGate({ onFinish }: { onFinish: () => void }) {
       <div className="pointer-events-none absolute bottom-[-15%] right-[-10%] h-[55vh] w-[55vh] rounded-full bg-[radial-gradient(circle,rgba(255,185,205,0.08),transparent_65%)] blur-3xl" />
 
       <motion.div
-        initial={{ opacity: 0, y: 40, filter: "blur(12px)" }}
-        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.1, ease: EASE }}
         className="intro-gate-content relative flex min-h-full w-full max-w-md flex-col items-center justify-center py-[max(1.25rem,env(safe-area-inset-top))] text-center"
       >

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 const PARTICLE_COLORS = ["#f4d9a0", "#e6c37a", "#ffc9d9", "#ffffff", "#e6c37a"];
 
@@ -13,17 +13,6 @@ function makeSprite(hex: string): HTMLCanvasElement {
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, 64, 64);
   return c;
-}
-
-/** Film grain, deferred 400ms so the very first frame is always simple. */
-function GrainLayer() {
-  const [show, setShow] = useState(false);
-  useEffect(() => {
-    const t = window.setTimeout(() => setShow(true), 400);
-    return () => window.clearTimeout(t);
-  }, []);
-  if (!show) return null;
-  return <div aria-hidden className="grain" />;
 }
 
 function Particles() {
@@ -130,13 +119,10 @@ function Particles() {
 
 export default function Backdrop() {
   return (
-    <>
-      <div aria-hidden className="pointer-events-none fixed inset-0 z-0">
-        <Particles />
-        <div className="absolute -top-40 right-[-15%] h-[60vh] w-[60vh] animate-pulse-soft rounded-full bg-[radial-gradient(circle,rgba(255,185,205,0.09),transparent_65%)] blur-3xl" />
-        <div className="absolute bottom-[-20%] left-[-12%] h-[70vh] w-[70vh] animate-pulse-soft rounded-full bg-[radial-gradient(circle,rgba(230,195,122,0.1),transparent_65%)] blur-3xl [animation-delay:1.8s]" />
-      </div>
-      <GrainLayer />
-    </>
+    <div aria-hidden className="pointer-events-none fixed inset-0 z-0">
+      <Particles />
+      <div className="absolute -top-40 right-[-15%] h-[60vh] w-[60vh] animate-pulse-soft rounded-full bg-[radial-gradient(circle,rgba(255,185,205,0.09),transparent_65%)] blur-3xl" />
+      <div className="absolute bottom-[-20%] left-[-12%] h-[70vh] w-[70vh] animate-pulse-soft rounded-full bg-[radial-gradient(circle,rgba(230,195,122,0.1),transparent_65%)] blur-3xl [animation-delay:1.8s]" />
+    </div>
   );
 }

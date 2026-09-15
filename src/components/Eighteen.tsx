@@ -43,7 +43,6 @@ export default function Eighteen() {
 
   const scale = useTransform(smoothProgress, [0, 0.5, 0.88], [2.7, 1, 0.94]);
   const opacity = useTransform(smoothProgress, [0, 0.28], [0, 1]);
-  const blur = useTransform(smoothProgress, [0, 0.42], ["blur(26px)", "blur(0px)"]);
   const ringSpin = useTransform(smoothProgress, [0, 1], [-40, 200]);
   const subOpacity = useTransform(smoothProgress, [0.3, 0.45], [0, 1]);
   const subY = useTransform(smoothProgress, [0.3, 0.45], [26, 0]);
@@ -68,7 +67,7 @@ export default function Eighteen() {
 
         {/* Ringed 20 */}
         <motion.div
-          style={{ scale, opacity, filter: blur }}
+          style={{ scale, opacity }}
           transition={{ ease: EASE }}
           className="eighteen-number relative flex items-center justify-center will-change-transform"
         >

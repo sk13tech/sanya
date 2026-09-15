@@ -47,15 +47,9 @@ function PhraseView({
   const out = hold ? 1 : 0;
   const opacity = useTransform(progress, [s0, s1, e0, e1], [0, 1, 1, out]);
   const y = useTransform(progress, [s0, s1, e0, e1], [56, 0, 0, hold ? 0 : -56]);
-  const blur = useTransform(
-    progress,
-    [s0, s1, e0, e1],
-    ["blur(14px)", "blur(0px)", "blur(0px)", hold ? "blur(0px)" : "blur(14px)"]
-  );
-
   return (
     <motion.div
-      style={{ opacity, y, filter: blur }}
+      style={{ opacity, y, willChange: "transform, opacity" }}
       className="phrase-screen absolute inset-0 flex flex-col items-center justify-center px-5 text-center sm:px-6"
     >
       <span

@@ -84,7 +84,7 @@ export default function LoveNotes() {
                 key="closed"
                 initial={{ opacity: 0, rotateX: -18 }}
                 animate={{ opacity: 1, rotateX: 0 }}
-                exit={{ opacity: 0, y: -22, rotateX: 18, filter: "blur(8px)" }}
+                exit={{ opacity: 0, y: -22, rotateX: 18 }}
                 transition={{ duration: 0.55, ease: EASE }}
                 className="absolute inset-0 flex flex-col items-center justify-center gap-5 rounded-[26px] border border-gold/30 bg-[radial-gradient(circle_at_50%_25%,rgba(230,195,122,0.14),rgba(12,8,20,0.96))] px-8 text-center"
               >
@@ -105,9 +105,9 @@ export default function LoveNotes() {
             ) : (
               <motion.div
                 key={`${order[pos % order.length]}-${pos}`}
-                initial={{ opacity: 0, y: 26, rotateX: -16, filter: "blur(10px)" }}
-                animate={{ opacity: 1, y: 0, rotateX: 0, filter: "blur(0px)" }}
-                exit={{ opacity: 0, y: -26, rotateX: 16, filter: "blur(10px)" }}
+                initial={{ opacity: 0, y: 26, rotateX: -16 }}
+                animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                exit={{ opacity: 0, y: -26, rotateX: 16 }}
                 transition={{ duration: 0.55, ease: EASE }}
                 className="absolute inset-0 flex flex-col items-center justify-center gap-6 rounded-[26px] border border-white/12 bg-white/[0.045] px-9 text-center backdrop-blur-xl"
               >

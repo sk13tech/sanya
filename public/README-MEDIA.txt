@@ -2,9 +2,9 @@
 ║   HAPPY 20th BIRTHDAY SANYA — HOW TO ADD YOUR OWN MEDIA      ║
 ╚══════════════════════════════════════════════════════════════╝
 
-Everything below is OPTIONAL. The site already works and looks
-complete without adding a single file — these just make it yours.
-Nothing ever breaks if a file is missing.
+The photos are optional because artwork fallbacks are included.
+Music is file-only: add the audio files below if you want sound.
+Nothing breaks if an audio file is missing; that part stays silent.
 
 
 ──────────────────────────────────────────────────────────────
@@ -15,14 +15,13 @@ Nothing ever breaks if a file is missing.
 
         public/background-music.mp3
 
-   • Replace the placeholder file with your real song.
+   • Add your real song using the exact filename above.
    • Accepted formats: .mp3  .m4a  .ogg  .wav
      (keep the name "background-music", just change the extension)
    • It fades in gently and loops forever.
    • It automatically ducks down to 5% volume when the birthday
      song plays at the cake, then swells back up.
-   • If the file is missing/invalid, a built-in romantic
-     instrumental loop plays instead.
+   • If the file is missing/invalid, background music stays silent.
 
 
 ──────────────────────────────────────────────────────────────
@@ -33,12 +32,11 @@ Nothing ever breaks if a file is missing.
 
         public/happy-birthday.mp3
 
-   • Replace the placeholder file with your real song.
+   • Add your real song using the exact filename above.
    • Accepted formats: .mp3  .m4a  .ogg  .wav
    • TIP: record YOURSELF singing it on your phone and drop that
      in. It is by far the most romantic option.
-   • If the file is missing/invalid, a built-in vocal-style
-     rendition plays instead.
+   • If the file is missing/invalid, this moment stays silent.
 
 
 ──────────────────────────────────────────────────────────────

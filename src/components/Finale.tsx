@@ -1,13 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import confetti from "canvas-confetti";
-import { ChevronDown, Mic, Sparkles, Wind } from "lucide-react";
+import { ChevronDown, Sparkles, Wind } from "lucide-react";
 import { useBlowDetector } from "../hooks/useBlowDetector";
 import { getMicState, requestMic } from "../audio/micState";
 import { playVocalBirthday, stopVocalBirthday } from "../audio/vocalSong";
 import { duckAmbient } from "../audio/ambient";
 import { playBurst, playGreeting, playPop, playSparkle, playWhoosh } from "../audio/sfx";
 import SwipeHint from "./SwipeHint";
+import BlowIcon from "./BlowIcon";
 import { AUTHOR_NAME, AUTHOR_NICK, HER_NAME } from "../config";
 import ChocoIcon from "./ChocoIcon";
 import { EASE, Eyebrow, FadeUp } from "./Reveal";
@@ -196,9 +197,9 @@ export default function Finale() {
           {!allOut ? (
             <motion.div
               key="wish"
-              initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              exit={{ opacity: 0, y: -26, filter: "blur(8px)" }}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -26 }}
               transition={{ duration: 0.8, ease: EASE }}
             >
               <h2 className="finale-title text-4xl font-semibold tracking-tight text-stone-100 sm:text-7xl">
@@ -211,9 +212,9 @@ export default function Finale() {
           ) : (
             <motion.div
               key="way"
-              initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              exit={{ opacity: 0, y: -26, filter: "blur(8px)" }}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -26 }}
               transition={{ duration: 0.8, ease: EASE }}
             >
               <h2 className="finale-title text-4xl font-semibold tracking-tight text-stone-100 sm:text-7xl">
@@ -520,7 +521,7 @@ export default function Finale() {
               onClick={enableMicNow}
               className="flex items-center gap-2 text-[10px] font-medium uppercase tracking-[0.3em] text-stone-500 transition-colors duration-300 hover:text-gold"
             >
-              <Mic className="h-3.5 w-3.5" strokeWidth={1.5} />
+              <BlowIcon className="h-4 w-4" animated={false} />
               or blow for real — use your mic
             </button>
           )}
@@ -560,7 +561,11 @@ export default function Finale() {
               />
             </svg>
             <div className="absolute inset-0 flex items-center justify-center">
-              <Mic className={`h-6 w-6 ${error ? "text-stone-600" : "text-gold"}`} strokeWidth={1.5} />
+              <BlowIcon
+                className={`h-10 w-10 ${error ? "text-stone-600" : "text-gold"}`}
+                strength={level}
+                animated={!error}
+              />
             </div>
           </motion.div>
 

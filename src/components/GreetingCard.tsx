@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import confetti from "canvas-confetti";
 import { Heart, Mail, Sparkles } from "lucide-react";
@@ -15,20 +15,50 @@ const LINES = [
   `So here's to twenty. To whatever this year decides to throw at you, and to me being right there while it does. Be as loud, as soft, as ridiculous, and as completely yourself as you want to be. I'll be the one clapping the loudest.`,
 ];
 
+/** Layout position in the document, unaffected by in-flight transforms. */
+function documentTop(el: HTMLElement): number {
+  let y = 0;
+  let node: HTMLElement | null = el;
+  while (node) {
+    y += node.offsetTop;
+    node = node.offsetParent as HTMLElement | null;
+  }
+  return y;
+}
+
 export default function GreetingCard() {
   const ref = useRef<HTMLElement>(null);
+  const greetingRef = useRef<HTMLParagraphElement>(null);
   const inView = useInView(ref, { amount: 0.35, once: true });
   const [open, setOpen] = useState(false);
+
+  /* Once the card has actually mounted, bring "Dear Sanya," to the
+     centre of the screen — then she can simply scroll on to read it. */
+  useEffect(() => {
+    if (!open) return;
+    let raf = 0;
+    let tries = 0;
+
+    const centreGreeting = () => {
+      const el = greetingRef.current;
+      if (el) {
+        const offset = Math.max(0, (window.innerHeight - el.offsetHeight) / 2);
+        const top = documentTop(el) - offset;
+        window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+        return;
+      }
+      if (tries++ < 150) raf = requestAnimationFrame(centreGreeting);
+    };
+
+    raf = requestAnimationFrame(centreGreeting);
+    return () => cancelAnimationFrame(raf);
+  }, [open]);
 
   const openCard = () => {
     if (open) return;
     setOpen(true);
     playPop(0.5);
     window.setTimeout(playSparkle, 260);
-    // bring the whole letter into view from its very top
-    window.setTimeout(() => {
-      ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 120);
     window.setTimeout(() => {
       confetti({
         particleCount: 70,
@@ -53,8 +83,8 @@ export default function GreetingCard() {
       <Eyebrow center>one last envelope</Eyebrow>
 
       <motion.h2
-        initial={{ opacity: 0, y: 26, filter: "blur(10px)" }}
-        animate={inView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
+        initial={{ opacity: 0, y: 26 }}
+        animate={inView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 1, ease: EASE }}
         className="greeting-title relative mt-7 text-center text-4xl font-semibold leading-[1.05] tracking-tight text-stone-100 sm:text-6xl"
       >
@@ -73,7 +103,7 @@ export default function GreetingCard() {
               onClick={openCard}
               initial={{ opacity: 0, y: 40, rotateX: -14 }}
               animate={{ opacity: 1, y: 0, rotateX: 0 }}
-              exit={{ opacity: 0, scale: 0.94, filter: "blur(12px)" }}
+              exit={{ opacity: 0, scale: 0.94 }}
               transition={{ duration: 0.85, ease: EASE }}
               whileHover={{ y: -8, rotateX: 4 }}
               className="group relative block w-full cursor-pointer"
@@ -148,9 +178,10 @@ export default function GreetingCard() {
                 </div>
 
                 <motion.p
+                  ref={greetingRef}
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5, duration: 0.8, ease: EASE }}
+                  transition={{ delay: 0.35, duration: 0.8, ease: EASE }}
                   className="mt-8 pr-1 text-center font-display text-4xl italic leading-tight text-stone-100 sm:text-5xl"
                 >
                   Dear {HER_NAME},
@@ -160,8 +191,8 @@ export default function GreetingCard() {
                   {LINES.map((line, i) => (
                     <motion.p
                       key={i}
-                      initial={{ opacity: 0, y: 18, filter: "blur(6px)" }}
-                      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                      initial={{ opacity: 0, y: 18 }}
+                      animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.75 + i * 0.35, duration: 0.95, ease: EASE }}
                       className="text-[15px] leading-[1.85] text-stone-300/90 sm:text-base"
                     >
