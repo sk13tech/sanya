@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { PHOTOS } from "../data/photos";
+import { ARTWORK_PHOTOS, MAX_PHOTOS } from "../data/photos";
+import { detectPhotos } from "./usePhotos";
 
 // Everything the experience needs before it should begin.
 const EXTRA_IMAGES = [
@@ -22,16 +23,30 @@ function emit() {
   subscribers.forEach((fn) => fn());
 }
 
+function step() {
+  loaded++;
+  emit();
+}
+
 function loadImage(url: string): Promise<void> {
   return new Promise((resolve) => {
     const img = new Image();
+    let settled = false;
     const finish = () => {
-      loaded++;
-      emit();
+      if (settled) return;
+      settled = true;
+      step();
       resolve();
     };
-    img.onload = finish;
-    img.onerror = finish; // a missing photo must not block the site
+    img.onload = async () => {
+      try {
+        await img.decode();
+      } catch {
+        // A successful load can still reject decode in older browsers.
+      }
+      finish();
+    };
+    img.onerror = finish; // a missing image must not block the site
     img.decoding = "async";
     img.src = url;
   });
@@ -42,15 +57,12 @@ export function startPreload() {
   if (started) return;
   started = true;
 
-  const urls = Array.from(
-    new Set([
-      ...EXTRA_IMAGES,
-      ...PHOTOS.map((p) => p.src),
-      ...PHOTOS.map((p) => p.fallback),
-    ])
+  const fallbackUrls = Array.from(
+    new Set(ARTWORK_PHOTOS.map((photo) => photo.src))
   );
 
-  total = urls.length + 1; // +1 for webfonts
+  // section artwork + gallery fallbacks + webfonts + one probe per slot
+  total = EXTRA_IMAGES.length + fallbackUrls.length + 1 + MAX_PHOTOS;
   emit();
 
   const fontsReady: Promise<unknown> =
@@ -58,12 +70,17 @@ export function startPreload() {
       ? (document as Document & { fonts: FontFaceSet }).fonts.ready
       : Promise.resolve();
 
-  const fontTask = Promise.resolve(fontsReady).then(() => {
-    loaded++;
-    emit();
-  });
+  const fontTask = Promise.resolve(fontsReady).then(step);
 
-  const everything = Promise.all([fontTask, ...urls.map(loadImage)]);
+  // Detecting a photo also downloads it, so found photos arrive warm.
+  const photoTask = detectPhotos(step);
+
+  const everything = Promise.all([
+    fontTask,
+    photoTask,
+    ...EXTRA_IMAGES.map(loadImage),
+    ...fallbackUrls.map(loadImage),
+  ]);
   const safety = new Promise<void>((r) => window.setTimeout(r, SAFETY_MS));
 
   Promise.race([everything, safety]).then(() => {

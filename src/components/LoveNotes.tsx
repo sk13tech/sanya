@@ -80,7 +80,7 @@ export default function LoveNotes() {
                 initial={{ opacity: 0, y: 24, rotateX: -14 }}
                 animate={{ opacity: 1, y: 0, rotateX: 0 }}
                 transition={{ duration: 0.65, ease: EASE }}
-                className="absolute inset-0 flex flex-col items-center justify-center gap-6 overflow-hidden rounded-[26px] border border-white/12 bg-white/[0.045] px-7 text-center backdrop-blur-xl sm:px-10"
+                className="absolute inset-0 flex flex-col items-center justify-center gap-6 overflow-hidden rounded-[26px] border border-white/12 bg-[#0d0a15]/95 px-7 text-center sm:px-10"
               >
                 <span className="pointer-events-none absolute -right-14 -top-14 h-44 w-44 rounded-full bg-gold/10 blur-3xl" />
                 <p className="text-[9px] font-medium tracking-[0.22em] text-gold/80">

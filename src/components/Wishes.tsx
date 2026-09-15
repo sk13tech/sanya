@@ -93,7 +93,7 @@ export default function Wishes() {
           {WISHES.map((wish, i) => (
             <div
               key={wish.word}
-              className="wish-card group relative flex h-[68svh] max-h-[42rem] w-[82vw] shrink-0 flex-col justify-between overflow-y-auto overflow-x-hidden rounded-[1.6rem] border border-white/10 bg-white/[0.035] p-6 backdrop-blur-xl transition-colors duration-500 hover:border-gold/30 sm:w-[26rem] sm:rounded-[2rem] sm:p-10"
+              className="wish-card group relative flex h-[68svh] max-h-[42rem] w-[82vw] shrink-0 flex-col justify-between overflow-y-auto overflow-x-hidden rounded-[1.6rem] border border-white/10 bg-[#0d0a15]/95 p-6 transition-colors duration-500 hover:border-gold/30 sm:w-[26rem] sm:rounded-[2rem] sm:p-10"
             >
               <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-gold/10 blur-3xl transition-opacity duration-700 group-hover:opacity-100 sm:opacity-60" />
               <div className="flex items-start justify-between">

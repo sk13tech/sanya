@@ -162,7 +162,7 @@ export default function GreetingCard() {
               animate={{ opacity: 1, rotateX: 0, y: 0, scale: 1 }}
               transition={{ duration: 1.05, ease: EASE }}
               style={{ transformOrigin: "top center" }}
-              className="relative overflow-hidden rounded-[24px] border border-gold/25 bg-[linear-gradient(160deg,rgba(255,252,244,0.055),rgba(255,255,255,0.02))] p-6 backdrop-blur-xl shadow-[0_50px_120px_-35px_rgba(0,0,0,0.95)] sm:rounded-[30px] sm:p-14"
+              className="relative overflow-hidden rounded-[24px] border border-gold/25 bg-[#0d0a15] bg-[linear-gradient(160deg,rgba(255,252,244,0.055),rgba(255,255,255,0.02))] p-6 shadow-[0_50px_120px_-35px_rgba(0,0,0,0.95)] sm:rounded-[30px] sm:p-14"
             >
               {/* paper ornament */}
               <span className="pointer-events-none absolute inset-4 rounded-[22px] border border-dashed border-gold/15" />

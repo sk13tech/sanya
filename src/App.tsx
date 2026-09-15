@@ -37,10 +37,14 @@ export default function App() {
   return (
     <div className="relative min-h-screen bg-ink font-sans text-stone-100">
       <NoCopy />
-      {stage !== "gate" && <Backdrop />}
-      <CursorGlow />
-      <ProgressBar />
-      <TapHearts />
+      {stage === "main" && (
+        <>
+          <Backdrop />
+          <CursorGlow />
+          <ProgressBar />
+          <TapHearts />
+        </>
+      )}
 
       <AnimatePresence mode="wait">
         {stage === "gate" && (
@@ -51,20 +55,22 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      <main className="relative z-10">
-        <Hero ready={stage === "main"} />
-        <StickyPhrases />
-        <Eighteen />
-        <Moments />
-        <Gallery />
-        <Marquee />
-        <Wishes />
-        <LoveNotes />
-        <Reasons />
-        <Finale />
-        <GreetingCard />
-        <Footer />
-      </main>
+      {stage === "main" && (
+        <main className="relative z-10">
+          <Hero ready />
+          <StickyPhrases />
+          <Eighteen />
+          <Moments />
+          <Gallery />
+          <Marquee />
+          <Wishes />
+          <LoveNotes />
+          <Reasons />
+          <Finale />
+          <GreetingCard />
+          <Footer />
+        </main>
+      )}
 
       <MusicToggle active={stage === "main"} />
     </div>

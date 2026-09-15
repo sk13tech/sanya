@@ -70,7 +70,6 @@
 html {
   scroll-behavior: smooth;
   overscroll-behavior-y: none;
-  scrollbar-gutter: stable;
 }
 
 @media (prefers-reduced-motion: reduce) {

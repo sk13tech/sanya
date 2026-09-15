@@ -1,4 +1,4 @@
-import { useRef, useState, type KeyboardEvent, type PointerEvent } from "react";
+import { useRef, type KeyboardEvent, type PointerEvent } from "react";
 import { motion, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
 
 const THUMB_PX = 46;
@@ -7,7 +7,7 @@ export default function ProgressBar() {
   const { scrollYProgress } = useScroll();
   const trackRef = useRef<HTMLDivElement>(null);
   const dragging = useRef(false);
-  const [progress, setProgress] = useState(0);
+  const lastPercent = useRef(-1);
 
   const thumbTop = useTransform(
     scrollYProgress,
@@ -15,7 +15,13 @@ export default function ProgressBar() {
   );
 
   useMotionValueEvent(scrollYProgress, "change", (value) => {
-    setProgress(Math.round(value * 100));
+    // Keep accessibility metadata current without re-rendering React
+    // on every animation frame.
+    const percent = Math.round(value * 100);
+    if (percent !== lastPercent.current) {
+      lastPercent.current = percent;
+      trackRef.current?.setAttribute("aria-valuenow", String(percent));
+    }
   });
 
   const scrollFromPointer = (clientY: number) => {
@@ -78,7 +84,7 @@ export default function ProgressBar() {
       aria-orientation="vertical"
       aria-valuemin={0}
       aria-valuemax={100}
-      aria-valuenow={progress}
+      aria-valuenow={0}
       tabIndex={0}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}

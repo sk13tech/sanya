@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 
-const PARTICLE_COLORS = ["#f4d9a0", "#e6c37a", "#ffc9d9", "#ffffff", "#e6c37a"];
+const PARTICLE_COLORS = ["#f4d9a0", "#e6c37a", "#ffc9d9", "#ffffff"];
 
 function makeSprite(hex: string): HTMLCanvasElement {
   const c = document.createElement("canvas");
@@ -38,10 +38,13 @@ function Particles() {
       drift: number; phase: number; tw: number; base: number;
       sprite: HTMLCanvasElement;
     }[] = [];
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    const isCoarse = window.matchMedia("(pointer: coarse)").matches;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const dpr = Math.min(window.devicePixelRatio || 1, isCoarse ? 1 : 1.35);
+    const frameInterval = 1000 / (isCoarse ? 30 : 45);
 
     const spawn = (w: number, h: number) => {
-      const count = Math.min(70, Math.floor((w * h) / 30000));
+      const count = Math.min(52, Math.floor((w * h) / 38000));
       const arr = [];
       for (let i = 0; i < count; i++) {
         arr.push({
@@ -56,7 +59,7 @@ function Particles() {
           sprite: sprites[Math.floor(Math.random() * sprites.length)],
         });
       }
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 3; i++) {
         arr.push({
           x: Math.random() * w,
           y: Math.random() * h,
@@ -84,19 +87,31 @@ function Particles() {
     };
 
     resize();
-    window.addEventListener("resize", resize);
+    let resizeRaf = 0;
+    const requestResize = () => {
+      cancelAnimationFrame(resizeRaf);
+      resizeRaf = requestAnimationFrame(resize);
+    };
+    window.addEventListener("resize", requestResize, { passive: true });
 
     let t = 0;
-    const tick = () => {
+    let lastFrame = 0;
+    const tick = (now: number) => {
       if (document.hidden) {
+        raf = 0;
+        return;
+      }
+      if (now - lastFrame < frameInterval) {
         raf = requestAnimationFrame(tick);
         return;
       }
-      t += 0.016;
+      const delta = Math.min(2, (now - lastFrame) / 16.67 || 1);
+      lastFrame = now;
+      t += 0.016 * delta;
       ctx!.clearRect(0, 0, width, height);
       for (const p of particles) {
-        p.y -= p.vy;
-        p.x += Math.sin(t * 0.6 + p.drift) * 0.18;
+        p.y -= p.vy * delta;
+        p.x += Math.sin(t * 0.6 + p.drift) * 0.18 * delta;
         if (p.y < -p.r * 2) { p.y = height + p.r * 2; p.x = Math.random() * width; }
         const alpha = p.base * (0.55 + 0.45 * Math.sin(t * p.tw + p.phase));
         if (alpha <= 0.01) continue;
@@ -106,11 +121,31 @@ function Particles() {
       ctx!.globalAlpha = 1;
       raf = requestAnimationFrame(tick);
     };
-    raf = requestAnimationFrame(tick);
+    const start = () => {
+      if (!document.hidden && !raf && !reduceMotion) {
+        raf = requestAnimationFrame(tick);
+      }
+    };
+    const onVisibility = () => start();
+
+    if (reduceMotion) {
+      // Draw one static frame instead of running a permanent animation loop.
+      ctx.clearRect(0, 0, width, height);
+      for (const p of particles) {
+        ctx.globalAlpha = p.base;
+        ctx.drawImage(p.sprite, p.x - p.r, p.y - p.r, p.r * 2, p.r * 2);
+      }
+      ctx.globalAlpha = 1;
+    } else {
+      start();
+      document.addEventListener("visibilitychange", onVisibility);
+    }
 
     return () => {
       cancelAnimationFrame(raf);
-      window.removeEventListener("resize", resize);
+      cancelAnimationFrame(resizeRaf);
+      window.removeEventListener("resize", requestResize);
+      document.removeEventListener("visibilitychange", onVisibility);
     };
   }, []);
 

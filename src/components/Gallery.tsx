@@ -1,49 +1,59 @@
-import { useRef, useState } from "react";
-import { motion, useScroll, useSpring, useTransform, type MotionValue } from "framer-motion";
+import { useEffect, useState } from "react";
+import {
+  motion,
+  useMotionValueEvent,
+  useScroll,
+  useSpring,
+  useTransform,
+  type MotionValue,
+} from "framer-motion";
 import { Heart, MoveDown } from "lucide-react";
-import { PHOTOS, type Photo } from "../data/photos";
+import { type Photo } from "../data/photos";
+import { usePhotos } from "../hooks/usePhotos";
 import { HER_NAME } from "../config";
 import { Eyebrow, Words } from "./Reveal";
 
-const TOTAL = PHOTOS.length;
-const SPAN = 1 / TOTAL;
-const FADE = SPAN * 0.4; // 8% of total scroll
+/** Scroll runway given to each photo. */
+const VH_PER_PHOTO = 56;
 
 function Frame({
   photo,
   index,
+  total,
   progress,
 }: {
   photo: Photo;
   index: number;
+  total: number;
   progress: MotionValue<number>;
 }) {
   const [src, setSrc] = useState(photo.src);
 
-  const start = index * SPAN;
-  const end = (index + 1) * SPAN;
+  const span = 1 / total;
+  const fade = span * 0.4;
+  const start = index * span;
+  const end = (index + 1) * span;
 
-  const oStart = Math.max(0, start - FADE);
-  const oIn = Math.min(1, start + FADE * 0.4);
-  const oOut = Math.max(0, end - FADE * 0.4);
-  const oEnd = Math.min(1, end + FADE);
+  const oStart = Math.max(0, start - fade);
+  const oIn = Math.min(1, start + fade * 0.4);
+  const oOut = Math.max(0, end - fade * 0.4);
+  const oEnd = Math.min(1, end + fade);
 
-  // frame visibility
   const opacity = useTransform(
     progress,
     [oStart, oIn, oOut, oEnd],
     index === 0 ? [1, 1, 1, 0] : [0, 1, 1, 0]
   );
 
-  // slow Ken-Burns drift (clips into available range)
-  const mStart = Math.max(0, start - FADE);
-  const mEnd = Math.min(1, end + FADE);
+  // slow Ken-Burns drift
+  const mStart = Math.max(0, start - fade);
+  const mEnd = Math.min(1, end + fade);
   const scale = useTransform(progress, [mStart, mEnd], [1.15, 1.03]);
   const y = useTransform(progress, [mStart, mEnd], ["2.5%", "-2.5%"]);
 
-  // caption: floats up as photo frames settle
-  const cStart = Math.max(0, start - FADE * 0.4);
-  const cIn = Math.min(1, start + FADE * 0.8);
+  // caption floats up as the frame settles
+  const cStart = Math.max(0, start - fade * 0.4);
+  const cIn = Math.min(1, start + fade * 0.8);
   const capOpacity = useTransform(
     progress,
     [cStart, cIn, oOut, oEnd],
@@ -52,10 +62,7 @@ function Frame({
   const capY = useTransform(progress, [cStart, cIn, oOut, oEnd], [28, 0, 0, -28]);
 
   return (
-    <motion.div
-      style={{ opacity, willChange: "opacity" }}
-      className="absolute inset-0"
-    >
+    <motion.div style={{ opacity, willChange: "opacity" }} className="absolute inset-0">
       <motion.img
         src={src}
         alt={photo.alt}
@@ -83,9 +90,18 @@ function Frame({
   );
 }
 
-function Dot({ index, progress }: { index: number; progress: MotionValue<number> }) {
-  const dStart = Math.max(0, index * SPAN - SPAN * 0.6);
-  const dIn = Math.min(1, index * SPAN + SPAN * 0.4);
+function Dot({
+  index,
+  total,
+  progress,
+}: {
+  index: number;
+  total: number;
+  progress: MotionValue<number>;
+}) {
+  const span = 1 / total;
+  const dStart = Math.max(0, index * span - span * 0.6);
+  const dIn = Math.min(1, index * span + span * 0.4);
   const opacity = useTransform(progress, [dStart, dIn], [0.22, 1]);
   const scale = useTransform(progress, [dStart, dIn], [1, 1.9]);
   return (
@@ -97,22 +113,52 @@ function Dot({ index, progress }: { index: number; progress: MotionValue<number>
 }
 
 export default function Gallery() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({ target: sectionRef });
-  const smoothProgress = useSpring(scrollYProgress, {
+  const { photos } = usePhotos();
+  const [sectionEl, setSectionEl] = useState<HTMLElement | null>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const total = Math.max(1, photos.length);
+  // the runway grows with however many photos were added
+  const runway = Math.max(180, total * VH_PER_PHOTO);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionEl ? { current: sectionEl } : undefined,
+  });
+  const progress = useSpring(scrollYProgress, {
     stiffness: 130,
     damping: 32,
     mass: 0.35,
     restDelta: 0.001,
   });
-  const headOpacity = useTransform(smoothProgress, [0, 0.04, 0.9, 1], [1, 1, 1, 0]);
+  const headOpacity = useTransform(progress, [0, 0.04, 0.9, 1], [1, 1, 1, 0]);
+
+  // Only the current photo and its two neighbours need full-size layers.
+  // This keeps GPU memory stable even when all 10 slots are filled.
+  useMotionValueEvent(progress, "change", (value) => {
+    const next = Math.min(total - 1, Math.floor(Math.max(0, value) * total));
+    setActiveIndex((current) => (current === next ? current : next));
+  });
+
+  useEffect(() => {
+    setActiveIndex((current) => Math.min(current, total - 1));
+  }, [total]);
+
+  const visiblePhotos = photos
+    .map((photo, index) => ({ photo, index }))
+    .filter(({ index }) => Math.abs(index - activeIndex) <= 1);
 
   return (
-    <section ref={sectionRef} className="relative h-[280vh]">
+    <section ref={setSectionEl} className="relative" style={{ height: `${runway}vh` }}>
       <div className="gallery-screen sticky top-0 h-[100svh] overflow-hidden">
         <div className="gallery-frame absolute inset-0 sm:inset-x-[12vw] sm:inset-y-[6vh] sm:overflow-hidden sm:rounded-[36px] sm:border sm:border-white/10">
-          {PHOTOS.map((photo, i) => (
-            <Frame key={photo.src} photo={photo} index={i} progress={smoothProgress} />
+          {visiblePhotos.map(({ photo, index }) => (
+            <Frame
+              key={photo.src}
+              photo={photo}
+              index={index}
+              total={total}
+              progress={progress}
+            />
           ))}
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_45%,rgba(7,5,16,0.75)_100%)]" />
         </div>
@@ -121,17 +167,19 @@ export default function Gallery() {
           style={{ opacity: headOpacity, willChange: "opacity" }}
           className="gallery-heading pointer-events-none absolute inset-x-0 top-[max(1rem,8vh)] z-20 px-4 text-center sm:px-6"
         >
-          <Eyebrow center>{HER_NAME} & me, in frames</Eyebrow>
+          <Eyebrow center>{HER_NAME} &amp; me, in frames 📷</Eyebrow>
           <h2 className="mt-5 text-3xl font-semibold leading-[1.08] tracking-tight text-stone-50 sm:text-5xl">
-            <Words text="Five frames," />{" "}
-            <span className="gold-shimmer pr-2 font-display italic">a thousand memories.</span>
+            <Words text={`${total} ${total === 1 ? "frame" : "frames"},`} />{" "}
+            <span className="gold-shimmer pr-2 font-display italic">
+              a thousand memories.
+            </span>
           </h2>
         </motion.div>
 
         <div className="gallery-guide absolute inset-x-0 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-20 flex flex-col items-center gap-3 px-3 sm:bottom-7 sm:gap-4">
           <div className="flex items-center gap-2.5">
-            {PHOTOS.map((photo, i) => (
-              <Dot key={photo.src} index={i} progress={smoothProgress} />
+            {photos.map((photo, i) => (
+              <Dot key={photo.src} index={i} total={total} progress={progress} />
             ))}
           </div>
 
