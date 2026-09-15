@@ -123,16 +123,15 @@ img {
   color: #fff9ec;
 }
 
+/* The native scrollbar is hidden; ProgressBar renders a consistent,
+   draggable scrollbar on the left in every browser. */
 ::-webkit-scrollbar {
-  width: 9px;
+  width: 0;
+  height: 0;
 }
-::-webkit-scrollbar-track {
-  background: #070510;
-}
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(#caa25c, #6f5426);
-  border-radius: 99px;
-  border: 2px solid #070510;
+
+html {
+  scrollbar-width: none;
 }
 
 /* Shimmering champagne-gold gradient text */

@@ -124,3 +124,44 @@ export function playGreeting() {
   playPop(0.8);
   window.setTimeout(() => playPop(0.8), 140);
 }
+
+// A soft music-box "tick" for each year counted on the loader.
+// `step` (0–1) lifts the pitch as the count climbs toward twenty.
+export function playTick(step = 0) {
+  const c = ac();
+  if (!bus) return;
+  const t = c.currentTime;
+
+  // gentle rising scale so 1 → 20 feels like it's building
+  const base = 620 + step * 520;
+
+  const env = c.createGain();
+  env.gain.setValueAtTime(0, t);
+  env.gain.linearRampToValueAtTime(0.085, t + 0.004);
+  env.gain.exponentialRampToValueAtTime(0.0001, t + 0.34);
+  env.connect(bus);
+
+  for (const [mult, amt] of [
+    [1, 1],
+    [2.01, 0.28],
+    [3.98, 0.08],
+  ] as const) {
+    const o = c.createOscillator();
+    o.type = "sine";
+    o.frequency.value = base * mult;
+    const g = c.createGain();
+    g.gain.value = amt;
+    o.connect(g).connect(env);
+    o.start(t);
+    o.stop(t + 0.36);
+  }
+}
+
+// A brighter chime when the count lands on twenty.
+export function playCountFinish() {
+  const c = ac();
+  const t = c.currentTime;
+  [783.99, 1046.5, 1318.5, 1567.98].forEach((f, i) =>
+    chime(f, t + i * 0.085, 0.085)
+  );
+}

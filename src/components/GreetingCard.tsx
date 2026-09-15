@@ -4,7 +4,6 @@ import confetti from "canvas-confetti";
 import { Heart, Mail, Sparkles } from "lucide-react";
 import { playPop, playSparkle } from "../audio/sfx";
 import { AUTHOR_NAME, AUTHOR_NICK, HER_NAME } from "../config";
-import ChocoIcon from "./ChocoIcon";
 import { EASE, Eyebrow } from "./Reveal";
 
 const FIRST_NAME = AUTHOR_NAME.split(" ")[0];
@@ -80,7 +79,7 @@ export default function GreetingCard() {
       {/* warm glow */}
       <div className="pointer-events-none absolute left-1/2 top-1/2 h-[75vmin] w-[95vmin] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(ellipse,rgba(230,195,122,0.1),rgba(255,185,205,0.05)_45%,transparent_70%)] blur-3xl" />
 
-      <Eyebrow center>one last envelope</Eyebrow>
+      <Eyebrow center>one last envelope for {HER_NAME}</Eyebrow>
 
       <motion.h2
         initial={{ opacity: 0, y: 26 }}
@@ -219,8 +218,7 @@ export default function GreetingCard() {
                     — always yours, {FIRST_NAME}
                   </p>
                   <p className="mt-2.5 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.35em] text-stone-500">
-                    your {AUTHOR_NICK}
-                    <ChocoIcon className="h-3.5 w-3.5 text-gold" />
+                    your {AUTHOR_NICK} 🍫
                   </p>
 
                   <motion.div

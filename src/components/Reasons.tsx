@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { EASE, Eyebrow, FadeUp, Words } from "./Reveal";
+import { HER_NAME } from "../config";
 import { cn } from "../utils/cn";
 
 const REASONS = [
@@ -28,10 +29,10 @@ const REASONS = [
 export default function Reasons() {
   return (
     <section className="relative mx-auto max-w-6xl px-6 py-36 sm:py-48">
-      <Eyebrow>they said pick just three</Eyebrow>
+      <Eyebrow>they said pick just three — about {HER_NAME}</Eyebrow>
       <div className="mt-8 flex flex-wrap items-end gap-x-6 gap-y-4">
         <h2 className="text-4xl font-semibold leading-[1.05] tracking-tight text-stone-100 sm:text-6xl">
-          <Words text="20 reasons" />
+          <Words text={`20 reasons, ${HER_NAME}`} />
           <br />
           <Words text="I love you." delay={0.2} />
         </h2>

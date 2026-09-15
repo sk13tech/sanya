@@ -10,6 +10,7 @@ import {
   Star,
 } from "lucide-react";
 import { Eyebrow } from "./Reveal";
+import { HER_NAME } from "../config";
 
 const WISHES = [
   {
@@ -76,9 +77,9 @@ export default function Wishes() {
         <motion.div ref={trackRef} style={{ x }} className="flex w-max items-stretch gap-6 px-[7vw] will-change-transform sm:gap-8">
           {/* Intro cell */}
           <div className="wishes-intro flex min-w-[82vw] flex-col justify-center sm:min-w-[38rem]">
-            <Eyebrow>if i could gift you anything</Eyebrow>
+            <Eyebrow>if i could gift {HER_NAME} anything</Eyebrow>
             <h2 className="wishes-title mt-7 text-4xl font-semibold leading-[1.02] tracking-tight text-stone-100 sm:mt-8 sm:text-7xl">
-              Six wishes,
+              Six wishes for {HER_NAME},
               <br />
               <span className="gold-shimmer pr-2 font-display italic">wrapped in gold.</span>
             </h2>

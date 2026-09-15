@@ -2,8 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Check } from "lucide-react";
 import { EASE } from "./Reveal";
-import { TURNING_AGE } from "../config";
+import { TURNING_AGE, HER_NAME } from "../config";
 import { usePreload } from "../hooks/usePreload";
+import { playCountFinish, playTick } from "../audio/sfx";
 
 const SPARK_COLORS = ["#e6c37a", "#f6e6bf", "#ffb9cd", "#ffffff"];
 
@@ -35,6 +36,15 @@ export default function Loader({ onDone }: { onDone: () => void }) {
   const finale = counted && ready;
   const sparks = useSparks(n, finale);
   const percent = Math.round(progress * 100);
+
+  // a soft tick for every year counted, rising in pitch toward twenty
+  useEffect(() => {
+    if (n >= TURNING_AGE) {
+      playCountFinish();
+      return;
+    }
+    playTick((n - 1) / (TURNING_AGE - 1));
+  }, [n]);
 
   // the number climbs in step with real loading progress
   useEffect(() => {
@@ -72,7 +82,7 @@ export default function Loader({ onDone }: { onDone: () => void }) {
         transition={{ duration: 0.8 }}
         className="relative text-[10px] font-medium uppercase tracking-[0.55em] text-gold/70"
       >
-        counting the years
+counting {HER_NAME}'s years
       </motion.p>
 
       {/* ── magic counter ── */}
@@ -167,7 +177,9 @@ export default function Loader({ onDone }: { onDone: () => void }) {
         transition={{ duration: 0.5 }}
         className="relative mt-2 pr-1 font-display text-2xl italic text-stone-300"
       >
-        {finale ? "two decades of Sanya — softly, magic" : "years of wonderful"}
+        {finale
+          ? `two decades of ${HER_NAME} — softly, magic`
+          : `years of wonderful ${HER_NAME}`}
       </motion.p>
 
       {/* ── real loading bar ── */}
@@ -200,7 +212,7 @@ export default function Loader({ onDone }: { onDone: () => void }) {
         </div>
 
         <p className="mt-1.5 text-center text-[8px] font-medium uppercase tracking-[0.3em] text-stone-700">
-          {loaded} / {total} pieces of the night
+          {loaded} / {total} pieces of {HER_NAME}'s night
         </p>
       </div>
       </div>

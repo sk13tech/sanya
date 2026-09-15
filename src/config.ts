@@ -5,6 +5,9 @@
 // Her name — appears in the finale sign-off and across the site.
 export const HER_NAME = "Sanya";
 
+// Her title / second name — used for the special, formal moments.
+export const HER_TITLE = "Anushka";
+
 // Your name — appears in the "Made with love & care" credit
 // in the footer and as the signature in the finale.
 export const AUTHOR_NAME = "Sanjeev Oberoi";

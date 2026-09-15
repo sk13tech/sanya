@@ -121,7 +121,7 @@ export default function Gallery() {
           style={{ opacity: headOpacity, willChange: "opacity" }}
           className="gallery-heading pointer-events-none absolute inset-x-0 top-[max(1rem,8vh)] z-20 px-4 text-center sm:px-6"
         >
-          <Eyebrow center>a little strip of us</Eyebrow>
+          <Eyebrow center>{HER_NAME} & me, in frames</Eyebrow>
           <h2 className="mt-5 text-3xl font-semibold leading-[1.08] tracking-tight text-stone-50 sm:text-5xl">
             <Words text="Five frames," />{" "}
             <span className="gold-shimmer pr-2 font-display italic">a thousand memories.</span>

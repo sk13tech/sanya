@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { Heart } from "lucide-react";
-import { AUTHOR_NAME, AUTHOR_NICK } from "../config";
-import ChocoIcon from "./ChocoIcon";
+import { AUTHOR_NAME, AUTHOR_NICK, HER_NAME, HER_TITLE } from "../config";
 import { EASE } from "./Reveal";
 
 export default function Footer() {
@@ -19,13 +18,13 @@ export default function Footer() {
         </div>
 
         <p className="mt-8 max-w-md text-balance font-display text-2xl italic leading-snug text-stone-300 sm:text-3xl">
-          Crafted with every heartbeat — for the girl who holds them all.
+          Crafted with every heartbeat — for {HER_NAME}, who holds them all.
         </p>
 
         <div className="mt-12 flex items-center gap-4">
           <span className="h-px w-12 bg-gradient-to-r from-transparent to-gold/50" />
           <p className="text-[10px] font-medium uppercase tracking-[0.5em] text-stone-500">
-            made with love &amp; care
+            made with love &amp; care ❤️
           </p>
           <span className="h-px w-12 bg-gradient-to-l from-transparent to-gold/50" />
         </div>
@@ -35,12 +34,11 @@ export default function Footer() {
         </p>
 
         <p className="mt-3 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.35em] text-stone-500">
-          your {AUTHOR_NICK}
-          <ChocoIcon className="h-3 w-3 text-gold/70" />
+          your {AUTHOR_NICK} 🍫
         </p>
 
-        <p className="mt-10 text-[10px] font-medium uppercase tracking-[0.45em] text-stone-600">
-          twenty &amp; forever
+        <p className="mt-10 text-[10px] font-medium uppercase tracking-[0.4em] text-stone-600">
+          {HER_NAME} ({HER_TITLE}) · twenty &amp; forever ✨
         </p>
       </motion.div>
     </footer>

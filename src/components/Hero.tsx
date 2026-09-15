@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { motion, useScroll, useSpring, useTransform, type Variants } from "framer-motion";
 import { ArrowDown, Sparkles } from "lucide-react";
 import { EASE } from "./Reveal";
+import { HER_NAME, HER_TITLE } from "../config";
 
 const container: Variants = {
   hidden: {},
@@ -60,7 +61,7 @@ export default function Hero({ ready }: { ready: boolean }) {
               className="hero-eyebrow flex items-center justify-center gap-2.5 text-balance text-[9px] font-medium uppercase tracking-[0.34em] text-gold/90 sm:gap-3 sm:text-xs sm:tracking-[0.5em]"
             >
               <Sparkles className="h-3.5 w-3.5" strokeWidth={1.5} />
-              the world got luckier today
+              the world got luckier today ✨
               <Sparkles className="h-3.5 w-3.5" strokeWidth={1.5} />
             </motion.p>
 
@@ -77,8 +78,9 @@ export default function Hero({ ready }: { ready: boolean }) {
               variants={item}
               className="hero-copy mt-8 max-w-xl text-balance text-sm leading-relaxed text-stone-300/85 sm:mt-10 sm:text-base md:text-lg"
             >
-              Dearest Sanya — your laugh rewires bad days and your heart makes
-              mine braver. Tonight, the whole sky is celebrating{" "}
+              Dearest {HER_NAME} ({HER_TITLE}) — your laugh rewires bad days and
+              your heart makes mine braver. Tonight, the whole sky is
+              celebrating{" "}
               <span className="font-display italic text-blush">you</span>.
             </motion.p>
           </motion.div>

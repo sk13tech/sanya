@@ -65,7 +65,7 @@ export default function IntroGate({ onFinish }: { onFinish: () => void }) {
 
         <p className="intro-gate-copy mt-6 max-w-sm text-balance text-sm leading-relaxed text-stone-400">
           At the end of this little journey, twenty candles will be waiting for
-          you — and just 2–3 light blows will put them out{" "}
+          you — and one gentle puff will put them all out{" "}
           <span className="font-display italic text-stone-200">for real</span>.
           Never hard or deep. Your mic only listens for gentle breaths.
         </p>

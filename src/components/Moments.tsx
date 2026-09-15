@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { EASE, Eyebrow, FadeUp, Words } from "./Reveal";
+import { HER_NAME } from "../config";
 import { cn } from "../utils/cn";
 
 function ParallaxCard({
@@ -62,7 +63,7 @@ function ParallaxCard({
 export default function Moments() {
   return (
     <section className="relative mx-auto max-w-6xl px-6 py-36 sm:py-48">
-      <Eyebrow>if i could pause time</Eyebrow>
+      <Eyebrow>if i could pause time for {HER_NAME}</Eyebrow>
       <h2 className="mt-8 max-w-3xl text-4xl font-semibold leading-[1.08] tracking-tight text-stone-100 sm:text-6xl">
         <Words text="I'd live inside" />
         <FadeUp delay={0.25} className="gold-shimmer pr-2 font-display italic">

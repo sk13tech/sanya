@@ -64,22 +64,24 @@ export function useBlowDetector(active: boolean, onBlow: () => void) {
           noiseFloor = noiseFloor * 0.94 + rms * 0.06;
           sampleCount++;
         }
-        const threshold = Math.max(0.026, Math.min(0.065, noiseFloor * 2.35));
-        const norm = Math.min(1, Math.max(0, (rms - noiseFloor) / (threshold * 1.8)));
+        // Very low bar: the faintest audible puff clears it. Never
+        // requires a deep breath or a loud blow.
+        const threshold = Math.max(0.014, Math.min(0.038, noiseFloor * 1.75));
+        const norm = Math.min(1, Math.max(0, (rms - noiseFloor) / (threshold * 1.6)));
         setLevel((p) => (Math.abs(p - norm) > 0.02 ? norm : p));
 
         if (coolDown > 0) {
           coolDown--;
         } else if (sampleCount > 10 && rms > threshold) {
           hotFrames++;
-          // Roughly 35-50ms: one easy puff is enough.
-          if (hotFrames >= 3) {
+          // ~2 frames (≈30ms) — the softest little puff registers.
+          if (hotFrames >= 2) {
             hotFrames = 0;
-            coolDown = 90;
+            coolDown = 75;
             onBlowRef.current();
           }
         } else {
-          hotFrames = Math.max(0, hotFrames - 2);
+          hotFrames = Math.max(0, hotFrames - 1);
         }
         raf = requestAnimationFrame(poll);
       };

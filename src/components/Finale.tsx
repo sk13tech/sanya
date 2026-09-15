@@ -1,16 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import confetti from "canvas-confetti";
-import { ChevronDown, Sparkles, Wind } from "lucide-react";
+import { ChevronDown, Wind } from "lucide-react";
 import { useBlowDetector } from "../hooks/useBlowDetector";
 import { getMicState, requestMic } from "../audio/micState";
-import { playVocalBirthday, stopVocalBirthday } from "../audio/vocalSong";
-import { duckAmbient } from "../audio/ambient";
-import { playBurst, playGreeting, playPop, playSparkle, playWhoosh } from "../audio/sfx";
+import { playVocalBirthday } from "../audio/vocalSong";
+import { stopAmbient } from "../audio/ambient";
+import { playBurst, playGreeting, playPop, playWhoosh } from "../audio/sfx";
 import SwipeHint from "./SwipeHint";
 import BlowIcon from "./BlowIcon";
 import { AUTHOR_NAME, AUTHOR_NICK, HER_NAME } from "../config";
-import ChocoIcon from "./ChocoIcon";
 import { EASE, Eyebrow, FadeUp } from "./Reveal";
 
 const COLORS = ["#e6c37a", "#f6e6bf", "#ffb9cd", "#ff7aa5", "#ffffff"];
@@ -68,25 +67,34 @@ export default function Finale() {
   const [singing, setSinging] = useState(false);
   const litRef = useRef(lit);
   litRef.current = lit;
+  const blowTriggered = useRef(false);
 
   const litCount = lit.filter(Boolean).length;
   const allOut = litCount === 0;
 
-  /* Each light blow knocks out roughly half the remaining candles,
-     so 2–3 easy puffs clear the cake. Never requires hard blowing. */
+  /* One gentle puff clears every remaining candle in a short wave.
+     The guard prevents microphone noise from triggering it twice. */
   const extinguishBatch = useCallback(() => {
+    if (blowTriggered.current) return;
+    blowTriggered.current = true;
     playWhoosh();
     const litIdx = shuffle(
       litRef.current.map((isLit, i) => (isLit ? i : -1)).filter((i) => i >= 0)
     );
-    const count = Math.max(1, Math.ceil(litIdx.length * 0.5));
-    window.setTimeout(() => {
-      setLit((prev) => {
-        const next = [...prev];
-        litIdx.slice(0, count).forEach((i) => (next[i] = false));
-        return next;
-      });
-    }, 60);
+    if (!litIdx.length) return;
+
+    const perWave = Math.max(1, Math.ceil(litIdx.length / 3));
+    [0, 1, 2].forEach((wave) => {
+      window.setTimeout(() => {
+        setLit((prev) => {
+          const next = [...prev];
+          litIdx
+            .slice(wave * perWave, (wave + 1) * perWave)
+            .forEach((i) => (next[i] = false));
+          return next;
+        });
+      }, 50 + wave * 100);
+    });
   }, []);
 
   const extinguishOne = (i: number) => {
@@ -100,6 +108,8 @@ export default function Finale() {
   };
 
   const extinguishAll = () => {
+    if (blowTriggered.current) return;
+    blowTriggered.current = true;
     playWhoosh();
     const idxs = shuffle(litRef.current.map((l, i) => (l ? i : -1)).filter((i) => i >= 0));
     const per = Math.max(1, Math.ceil(idxs.length / 3));
@@ -112,15 +122,6 @@ export default function Finale() {
         });
       }, k * 140)
     );
-  };
-
-  const relight = () => {
-    celebrated.current = false;
-    stopVocalBirthday();
-    setSinging(false);
-    setLit(Array(CANDLE_COUNT).fill(true));
-    playSparkle();
-    if (getMicState() === "granted") setMicMode(true);
   };
 
   const { level, error, supported } = useBlowDetector(micMode && !allOut, extinguishBatch);
@@ -136,7 +137,6 @@ export default function Finale() {
         playBurst();
       }, 380);
       const b = window.setTimeout(() => {
-        duckAmbient(34); // let the birthday song take the room
         playVocalBirthday(setSinging);
       }, 1300);
       return () => {
@@ -161,6 +161,11 @@ export default function Finale() {
       setMicMode(false);
     }
   }, [error]);
+
+  // the cake owns the room — silence the background music entirely
+  useEffect(() => {
+    if (inView) stopAmbient();
+  }, [inView]);
 
   useEffect(() => {
     if (inView && !greeted.current) {
@@ -190,7 +195,7 @@ export default function Finale() {
         style={{ opacity: 0.15 + (litCount / CANDLE_COUNT) * 0.85 }}
       />
 
-      <Eyebrow center>before midnight, one last thing</Eyebrow>
+      <Eyebrow center>before midnight, {HER_NAME} — one last thing</Eyebrow>
 
       <div className="finale-heading relative mt-8 min-h-[9rem] sm:mt-10 sm:min-h-[12rem]">
         <AnimatePresence mode="wait">
@@ -254,7 +259,7 @@ export default function Finale() {
                 <Wind className="h-5 w-5" strokeWidth={2} />
               </motion.span>
               <span className="relative text-balance text-[9px] font-extrabold uppercase tracking-[0.2em] text-gold sm:text-xs sm:tracking-[0.3em]">
-                2–3 light blows below
+                one gentle blow below
               </span>
             </div>
 
@@ -491,30 +496,26 @@ export default function Finale() {
           {allOut
             ? "all twenty — out in style"
             : litCount < CANDLE_COUNT
-              ? `${litCount} of 20 still dancing — ${litCount > CANDLE_COUNT / 2 ? "2 more light blows" : "one more light blow"}`
-              : "20 flames, waiting for you"}
+              ? "your wish is taking flight"
+              : `20 flames, waiting for ${HER_NAME}`}
         </motion.p>
       </AnimatePresence>
 
       {/* controls */}
       {!micMode ? (
         <div className="mt-8 flex flex-col items-center gap-5">
-          <motion.button
-            onClick={allOut ? relight : extinguishAll}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="relative inline-flex items-center gap-3 rounded-full border border-gold/40 bg-gold/10 px-8 py-4 text-[11px] font-semibold uppercase tracking-[0.32em] text-gold transition-colors duration-300 hover:bg-gold/20"
-          >
-            {!allOut && (
+          {!allOut && (
+            <motion.button
+              onClick={extinguishAll}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="relative inline-flex items-center gap-3 rounded-full border border-gold/40 bg-gold/10 px-8 py-4 text-[11px] font-semibold uppercase tracking-[0.32em] text-gold transition-colors duration-300 hover:bg-gold/20"
+            >
               <span className="absolute inset-0 animate-ping rounded-full border border-gold/40 [animation-duration:2.4s]" />
-            )}
-            {allOut ? (
-              <Sparkles className="h-4 w-4" strokeWidth={1.5} />
-            ) : (
               <Wind className="h-4 w-4" strokeWidth={1.5} />
-            )}
-            {allOut ? "Relight the magic" : "Blow them all out"}
-          </motion.button>
+              Blow them all out
+            </motion.button>
+          )}
 
           {!allOut && supported && !micBlocked && getMicState() !== "granted" && (
             <button
@@ -569,12 +570,6 @@ export default function Finale() {
             </div>
           </motion.div>
 
-          <p className="max-w-xs text-balance text-[11px] font-medium uppercase leading-relaxed tracking-[0.28em] text-stone-400">
-            {level > 0.45
-              ? "that's it — one more light blow"
-              : "gently blow 2–3 light times — never hard"}
-          </p>
-
           <button
             onClick={() => setMicMode(false)}
             className="text-[10px] font-medium uppercase tracking-[0.3em] text-stone-600 underline-offset-4 transition-colors hover:text-gold hover:underline"
@@ -597,7 +592,7 @@ export default function Finale() {
               Whatever you just wished for — I'll spend this whole year helping
               it come true.{" "}
               <span className="font-display text-base italic text-stone-200 sm:text-lg">
-                Happy 20th birthday, {HER_NAME}.
+                Happy 20th birthday, {HER_NAME}. 🎂
               </span>
             </p>
             {singing && (
@@ -616,15 +611,14 @@ export default function Finale() {
                     />
                   ))}
                 </span>
-                happy birthday to you
+                happy birthday to you 🎶
               </motion.p>
             )}
             <p className="mt-6 font-display text-2xl italic text-gold sm:text-3xl">
               — always, {FIRST_NAME}
             </p>
             <p className="mt-3 flex items-center justify-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.35em] text-stone-400">
-              your {AUTHOR_NICK}
-              <ChocoIcon className="h-3.5 w-3.5 text-gold" />
+              your {AUTHOR_NICK} 🍫
             </p>
           </motion.div>
         )}
