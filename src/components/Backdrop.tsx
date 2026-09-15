@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const PARTICLE_COLORS = ["#f4d9a0", "#e6c37a", "#ffc9d9", "#ffffff", "#e6c37a"];
 
@@ -15,37 +15,45 @@ function makeSprite(hex: string): HTMLCanvasElement {
   return c;
 }
 
-type Particle = {
-  x: number;
-  y: number;
-  r: number;
-  vy: number;
-  drift: number;
-  phase: number;
-  tw: number;
-  base: number;
-  sprite: HTMLCanvasElement;
-};
+/** Film grain, deferred 400ms so the very first frame is always simple. */
+function GrainLayer() {
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    const t = window.setTimeout(() => setShow(true), 400);
+    return () => window.clearTimeout(t);
+  }, []);
+  if (!show) return null;
+  return <div aria-hidden className="grain" />;
+}
 
-export default function Backdrop() {
+function Particles() {
   const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const canvas = ref.current;
     if (!canvas) return;
-    const ctx = canvas.getContext("2d");
+    let ctx: CanvasRenderingContext2D | null = null;
+    try {
+      ctx = canvas.getContext("2d");
+    } catch {
+      return;
+    }
     if (!ctx) return;
 
     const sprites = PARTICLE_COLORS.map(makeSprite);
     let width = 0;
     let height = 0;
     let raf = 0;
-    let particles: Particle[] = [];
+    let particles: {
+      x: number; y: number; r: number; vy: number;
+      drift: number; phase: number; tw: number; base: number;
+      sprite: HTMLCanvasElement;
+    }[] = [];
     const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
 
-    const spawn = (w: number, h: number): Particle[] => {
+    const spawn = (w: number, h: number) => {
       const count = Math.min(70, Math.floor((w * h) / 30000));
-      const arr: Particle[] = [];
+      const arr = [];
       for (let i = 0; i < count; i++) {
         arr.push({
           x: Math.random() * w,
@@ -59,7 +67,6 @@ export default function Backdrop() {
           sprite: sprites[Math.floor(Math.random() * sprites.length)],
         });
       }
-      // a few large soft bokeh
       for (let i = 0; i < 5; i++) {
         arr.push({
           x: Math.random() * w,
@@ -83,7 +90,7 @@ export default function Backdrop() {
       canvas.height = height * dpr;
       canvas.style.width = width + "px";
       canvas.style.height = height + "px";
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
       particles = spawn(width, height);
     };
 
@@ -92,26 +99,22 @@ export default function Backdrop() {
 
     let t = 0;
     const tick = () => {
-      // skip all work while the tab is hidden
       if (document.hidden) {
         raf = requestAnimationFrame(tick);
         return;
       }
       t += 0.016;
-      ctx.clearRect(0, 0, width, height);
+      ctx!.clearRect(0, 0, width, height);
       for (const p of particles) {
         p.y -= p.vy;
         p.x += Math.sin(t * 0.6 + p.drift) * 0.18;
-        if (p.y < -p.r * 2) {
-          p.y = height + p.r * 2;
-          p.x = Math.random() * width;
-        }
+        if (p.y < -p.r * 2) { p.y = height + p.r * 2; p.x = Math.random() * width; }
         const alpha = p.base * (0.55 + 0.45 * Math.sin(t * p.tw + p.phase));
         if (alpha <= 0.01) continue;
-        ctx.globalAlpha = alpha;
-        ctx.drawImage(p.sprite, p.x - p.r, p.y - p.r, p.r * 2, p.r * 2);
+        ctx!.globalAlpha = alpha;
+        ctx!.drawImage(p.sprite, p.x - p.r, p.y - p.r, p.r * 2, p.r * 2);
       }
-      ctx.globalAlpha = 1;
+      ctx!.globalAlpha = 1;
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
@@ -122,14 +125,18 @@ export default function Backdrop() {
     };
   }, []);
 
+  return <canvas ref={ref} className="absolute inset-0" />;
+}
+
+export default function Backdrop() {
   return (
     <>
       <div aria-hidden className="pointer-events-none fixed inset-0 z-0">
-        <canvas ref={ref} className="absolute inset-0" />
+        <Particles />
         <div className="absolute -top-40 right-[-15%] h-[60vh] w-[60vh] animate-pulse-soft rounded-full bg-[radial-gradient(circle,rgba(255,185,205,0.09),transparent_65%)] blur-3xl" />
         <div className="absolute bottom-[-20%] left-[-12%] h-[70vh] w-[70vh] animate-pulse-soft rounded-full bg-[radial-gradient(circle,rgba(230,195,122,0.1),transparent_65%)] blur-3xl [animation-delay:1.8s]" />
       </div>
-      <div aria-hidden className="grain" />
+      <GrainLayer />
     </>
   );
 }

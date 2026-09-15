@@ -7,11 +7,8 @@ import { Eyebrow, Words } from "./Reveal";
 
 const TOTAL = PHOTOS.length;
 const SPAN = 1 / TOTAL;
+const FADE = SPAN * 0.4; // 8% of total scroll
 
-/* One crossfading frame.
-   PERFORMANCE: only `opacity` and `transform` are animated — both are
-   GPU-composited, so the browser never re-paints or re-filters the
-   image while scrolling. (An animated CSS blur() here was the lag.) */
 function Frame({
   photo,
   index,
@@ -24,27 +21,39 @@ function Frame({
   const [src, setSrc] = useState(photo.src);
 
   const start = index * SPAN;
-  const end = start + SPAN;
-  const fade = SPAN * 0.4;
+  const end = (index + 1) * SPAN;
 
+  const oStart = Math.max(0, start - FADE);
+  const oIn = Math.min(1, start + FADE * 0.4);
+  const oOut = Math.max(0, end - FADE * 0.4);
+  const oEnd = Math.min(1, end + FADE);
+
+  // frame visibility
   const opacity = useTransform(
     progress,
-    [start - fade, start + fade * 0.4, end - fade * 0.4, end + fade],
+    [oStart, oIn, oOut, oEnd],
     index === 0 ? [1, 1, 1, 0] : [0, 1, 1, 0]
   );
 
-  // slow Ken-Burns drift (transform only)
-  const scale = useTransform(progress, [start - fade, end + fade], [1.14, 1.02]);
-  const y = useTransform(progress, [start - fade, end + fade], ["2.5%", "-2.5%"]);
+  // slow Ken-Burns drift (clips into available range)
+  const mStart = Math.max(0, start - FADE);
+  const mEnd = Math.min(1, end + FADE);
+  const scale = useTransform(progress, [mStart, mEnd], [1.15, 1.03]);
+  const y = useTransform(progress, [mStart, mEnd], ["2.5%", "-2.5%"]);
+
+  // caption: floats up as photo frames settle
+  const cStart = Math.max(0, start - FADE * 0.4);
+  const cIn = Math.min(1, start + FADE * 0.8);
+  const capOpacity = useTransform(
+    progress,
+    [cStart, cIn, oOut, oEnd],
+    index === 0 ? [1, 1, 1, 0] : [0, 1, 1, 0]
+  );
+  const capY = useTransform(progress, [cStart, cIn, oOut, oEnd], [28, 0, 0, -28]);
 
   return (
     <motion.div
-      style={{
-        opacity,
-        willChange: "opacity",
-        backfaceVisibility: "hidden",
-        transform: "translateZ(0)",
-      }}
+      style={{ opacity, willChange: "opacity" }}
       className="absolute inset-0"
     >
       <motion.img
@@ -61,30 +70,24 @@ function Frame({
       <div className={`pointer-events-none absolute inset-0 ${photo.grade}`} />
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-ink via-ink/40 to-transparent" />
 
-      <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-7 sm:p-9">
+      <motion.div
+        style={{ y: capY, opacity: capOpacity, willChange: "transform, opacity" }}
+        className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-7 sm:p-9"
+      >
         <p className="font-display text-2xl italic leading-tight text-stone-50 sm:text-4xl">
           {photo.caption}
         </p>
-        <Heart
-          className="mb-1.5 h-5 w-5 shrink-0 fill-blush text-blush"
-          strokeWidth={1.5}
-        />
-      </div>
+        <Heart className="mb-1.5 h-5 w-5 shrink-0 fill-blush text-blush" strokeWidth={1.5} />
+      </motion.div>
     </motion.div>
   );
 }
 
 function Dot({ index, progress }: { index: number; progress: MotionValue<number> }) {
-  const opacity = useTransform(
-    progress,
-    [index * SPAN - SPAN * 0.6, index * SPAN + SPAN * 0.4],
-    [0.22, 1]
-  );
-  const scale = useTransform(
-    progress,
-    [index * SPAN - SPAN * 0.6, index * SPAN + SPAN * 0.4],
-    [1, 1.9]
-  );
+  const dStart = Math.max(0, index * SPAN - SPAN * 0.6);
+  const dIn = Math.min(1, index * SPAN + SPAN * 0.4);
+  const opacity = useTransform(progress, [dStart, dIn], [0.22, 1]);
+  const scale = useTransform(progress, [dStart, dIn], [1, 1.9]);
   return (
     <motion.span
       style={{ opacity, scale, willChange: "transform, opacity" }}

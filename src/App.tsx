@@ -13,8 +13,8 @@ import StickyPhrases from "./components/StickyPhrases";
 import Eighteen from "./components/Eighteen";
 import Moments from "./components/Moments";
 import Gallery from "./components/Gallery";
-import MusicToggle from "./components/MusicToggle";
 import Marquee from "./components/Marquee";
+import MusicToggle from "./components/MusicToggle";
 import Wishes from "./components/Wishes";
 import LoveNotes from "./components/LoveNotes";
 import Reasons from "./components/Reasons";
@@ -35,7 +35,7 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen bg-ink font-sans text-stone-100">
-      <Backdrop />
+      {stage !== "gate" && <Backdrop />}
       <CursorGlow />
       <ProgressBar />
       <TapHearts />
