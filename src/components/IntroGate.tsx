@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Mic, ShieldCheck, Sparkles } from "lucide-react";
+import { Maximize, Mic, ShieldCheck, Sparkles } from "lucide-react";
 import { micSupported, requestMic, setMicState } from "../audio/micState";
 import { usePreload } from "../hooks/usePreload";
+import { enterFullscreen } from "../lib/fullscreen";
 import { EASE } from "./Reveal";
 
 export default function IntroGate({ onFinish }: { onFinish: () => void }) {
@@ -17,7 +18,12 @@ export default function IntroGate({ onFinish }: { onFinish: () => void }) {
   const allow = async () => {
     if (working) return;
     setWorking(true);
+
+    // Go fullscreen first, while this tap still counts as a user gesture —
+    // the mic prompt that follows would otherwise consume it.
+    await enterFullscreen();
     await requestMic();
+
     setWorking(false);
     onFinish();
   };
@@ -65,14 +71,20 @@ export default function IntroGate({ onFinish }: { onFinish: () => void }) {
 
         <p className="intro-gate-copy mt-6 max-w-sm text-balance text-sm leading-relaxed text-stone-400">
           At the end of this little journey, twenty candles will be waiting for
-          you — and one gentle puff will put them all out{" "}
+          you — and two gentle puffs will put them all out{" "}
           <span className="font-display italic text-stone-200">for real</span>.
           Never hard or deep. Your mic only listens for gentle breaths.
         </p>
 
-        <div className="intro-gate-privacy mt-8 flex items-center justify-center gap-2 text-balance text-[9px] font-medium uppercase tracking-[0.25em] text-stone-600">
-          <ShieldCheck className="h-3.5 w-3.5 text-gold/60" strokeWidth={1.5} />
-          nothing recorded · nothing leaves your device
+        <div className="intro-gate-privacy mt-8 flex flex-col items-center justify-center gap-2 text-balance text-[9px] font-medium uppercase tracking-[0.25em] text-stone-600">
+          <span className="flex items-center gap-2">
+            <ShieldCheck className="h-3.5 w-3.5 text-gold/60" strokeWidth={1.5} />
+            nothing recorded · nothing leaves your device
+          </span>
+          <span className="flex items-center gap-2">
+            <Maximize className="h-3 w-3 text-gold/50" strokeWidth={1.5} />
+            opens fullscreen · press Esc anytime
+          </span>
         </div>
 
         <button

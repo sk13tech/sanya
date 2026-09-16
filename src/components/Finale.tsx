@@ -17,6 +17,9 @@ const COLORS = ["#e6c37a", "#f6e6bf", "#ffb9cd", "#ff7aa5", "#ffffff"];
 const CANDLE_H = [34, 46, 28, 50, 38, 30, 44, 26, 42, 36, 52, 32, 48, 30, 40, 27, 45, 35, 31, 43];
 const CANDLE_COUNT = CANDLE_H.length;
 
+/** Two gentle puffs always clear the whole cake. */
+const MAX_BLOWS = 2;
+
 function fireBurst() {
   confetti({
     particleCount: 90,
@@ -67,34 +70,50 @@ export default function Finale() {
   const [singing, setSinging] = useState(false);
   const litRef = useRef(lit);
   litRef.current = lit;
-  const blowTriggered = useRef(false);
+  const blowNumber = useRef(0);
+  const blowBusy = useRef(false);
 
   const litCount = lit.filter(Boolean).length;
   const allOut = litCount === 0;
 
-  /* One gentle puff clears every remaining candle in a short wave.
-     The guard prevents microphone noise from triggering it twice. */
+  /* Exactly two gentle puffs clear the cake: the first takes roughly
+     half the flames, the second always finishes the rest. `blowBusy`
+     stops one continuous breath from counting as both. */
   const extinguishBatch = useCallback(() => {
-    if (blowTriggered.current) return;
-    blowTriggered.current = true;
-    playWhoosh();
+    if (blowBusy.current) return;
+
     const litIdx = shuffle(
       litRef.current.map((isLit, i) => (isLit ? i : -1)).filter((i) => i >= 0)
     );
     if (!litIdx.length) return;
 
-    const perWave = Math.max(1, Math.ceil(litIdx.length / 3));
+    blowBusy.current = true;
+    const blow = blowNumber.current + 1;
+    blowNumber.current = blow;
+    playWhoosh();
+
+    // first puff → half the candles, second puff → everything left
+    const count =
+      blow >= MAX_BLOWS ? litIdx.length : Math.ceil(litIdx.length / 2);
+    const chosen = litIdx.slice(0, count);
+
+    const perWave = Math.max(1, Math.ceil(chosen.length / 3));
     [0, 1, 2].forEach((wave) => {
       window.setTimeout(() => {
         setLit((prev) => {
           const next = [...prev];
-          litIdx
+          chosen
             .slice(wave * perWave, (wave + 1) * perWave)
             .forEach((i) => (next[i] = false));
           return next;
         });
       }, 50 + wave * 100);
     });
+
+    // brief lock so the tail of the same breath can't trigger blow two
+    window.setTimeout(() => {
+      blowBusy.current = false;
+    }, 900);
   }, []);
 
   const extinguishOne = (i: number) => {
@@ -108,8 +127,8 @@ export default function Finale() {
   };
 
   const extinguishAll = () => {
-    if (blowTriggered.current) return;
-    blowTriggered.current = true;
+    if (blowBusy.current) return;
+    blowNumber.current = MAX_BLOWS;
     playWhoosh();
     const idxs = shuffle(litRef.current.map((l, i) => (l ? i : -1)).filter((i) => i >= 0));
     const per = Math.max(1, Math.ceil(idxs.length / 3));
@@ -259,7 +278,7 @@ export default function Finale() {
                 <Wind className="h-5 w-5" strokeWidth={2} />
               </motion.span>
               <span className="relative text-balance text-[9px] font-extrabold uppercase tracking-[0.2em] text-gold sm:text-xs sm:tracking-[0.3em]">
-                one gentle blow below
+                two gentle blows below
               </span>
             </div>
 
@@ -496,7 +515,7 @@ export default function Finale() {
           {allOut
             ? "all twenty — out in style"
             : litCount < CANDLE_COUNT
-              ? "your wish is taking flight"
+              ? "almost there — one more gentle blow"
               : `20 flames, waiting for ${HER_NAME}`}
         </motion.p>
       </AnimatePresence>
