@@ -9,9 +9,50 @@ import { EASE, Eyebrow } from "./Reveal";
 const FIRST_NAME = AUTHOR_NAME.split(" ")[0];
 
 const LINES = [
-  `Twenty years ago the world gained something it didn't know it was missing, and nineteen of those years happened before I ever got to meet you. Sometimes I think about that — all those birthdays you had without me there, and how badly I want to make up for every single one.`,
-  `You have this impossible way of making everything lighter. Rooms, days, me. I don't know how you do it, and I've stopped trying to figure it out. I just know that somewhere along the way you stopped being a person I know and became the person I think of first — when something good happens, when something breaks, when nothing happens at all.`,
-  `So here's to twenty. To whatever this year decides to throw at you, and to me being right there while it does. Be as loud, as soft, as ridiculous, and as completely yourself as you want to be. I'll be the one clapping the loudest.`,
+  `Kabhi-kabhi sochta hoon… agar 2024 mein tum meri life mein na aati, toh shayad mujhe kabhi pata hi nahi chalta ki kisi ek insaan ka khayal bhi kisi ki poori duniya ko itna badal sakta hai.`,
+  `Tumhe maine pehli baar kab pasand kiya tha, woh shayad mujhe exactly yaad na ho…
+Lekin itna zaroor yaad hai ki tumhe pasand karna kab ek simple feeling se meri sabse beautiful feeling ban gaya, mujhe khud pata nahi chala.`,
+  `2024 se lekar aaj tak waqt kitna badal gaya…
+bahut kuch badla, log badle, situations badli…
+lekin tumhare liye mere dil mein jo jagah hai, woh nahi badli.`,
+  `Kabhi-kabhi bina kisi reason ke tumhara khayal aa jaata hai.
+Tumhari smile yaad aati hai, tumhari baatein yaad aati hain…
+aur pata nahi kyun, mere face par bhi ek smile aa jaati hai.`,
+  `Tumse baat karna mere liye sirf conversation nahi hai.
+Kabhi-kabhi tumhare ek simple se “hello” mein bhi woh sukoon milta hai jo poore din mein kahin aur nahi milta.`,
+  `Main tumse koi perfect love story ka promise nahi karna chahta. Life perfect nahi hoti, hum bhi perfect nahi honge. Kabhi arguments honge, kabhi misunderstandings hongi, kabhi difficult days bhi aayenge…`,
+  `Lekin agar kabhi tum mujhe apni life mein jagah do, toh main ek cheez zaroor chahta hoon—`,
+  `Tumhare difficult days mein tumhe akela feel na hone doon.
+Tumhari smile ko protect karne ki wajah banu.
+Aur jab duniya tumhe samajhne mein fail ho jaaye, tab tumhe ek aisa insaan mil sake jo tumhe bina judge kiye sun sake. ❤️`,
+  `Main chahta hoon ki tum meri best friend, meri comfort, meri favourite person bano.`,
+  `Jiske saath main bina filter ke khud reh sakun.
+Jiske saath stupid baaton par has sakun.
+Jiske saath silence bhi awkward na lage.
+Aur jiske saath future ke chhote-chhote dreams dekhna bhi beautiful lage.`,
+  `Sach bolun?--------
+mujhe tumhe samajhna hai.
+Tumhari care karni hai.
+Tumhari respect karni hai.
+Tumhare saath grow karna hai.
+Aur har din tumhe choose karna hai. `,
+  `Mujhe nahi pata tumhare dil mein mere liye kya hai.
+Shayad kuch hai… shayad kuch nahi hai.`,
+  `Aur main tumse koi zabardasti ka answer nahi chahta.`,
+  `Kyunki jo feeling mere andar 2024 mein shuru hui thi, woh waqt ke saath khatam nahi hui…
+Aur agar kabhi tumhare dil mein bhi mere liye thodi si jagah ho…`,
+  `toh main chahta hoon ki hum ek beautiful beginning karein.`,
+  `Koi jaldi nahi.
+Koi pressure nahi.
+Bas tum aur main… aur ek genuine chance. ❤️`,
+  `Aur haan…`,
+  `Agar tum kabhi mujhse poochogi ki
+“Tum mujhe itna kyun chahte ho?”`,
+  `Toh shayad mere paas koi perfect answer nahi hoga.`,
+  `Main bas itna kahunga—`,
+  `“Pata nahi…
+bas tum ho.
+Aur mere dil ko tum hi achhi lagti ho.”`,
 ];
 
 /** Layout position in the document, unaffected by in-flight transforms. */
@@ -79,7 +120,7 @@ export default function GreetingCard() {
       {/* warm glow */}
       <div className="pointer-events-none absolute left-1/2 top-1/2 h-[75vmin] w-[95vmin] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(ellipse,rgba(230,195,122,0.1),rgba(255,185,205,0.05)_45%,transparent_70%)] blur-3xl" />
 
-      <Eyebrow center>one last envelope for {HER_NAME}</Eyebrow>
+      <Eyebrow center>one last envelope for {HER_NAME}(ANUSHKA)</Eyebrow>
 
       <motion.h2
         initial={{ opacity: 0, y: 26 }}

@@ -6,17 +6,17 @@ import { cn } from "../utils/cn";
 const REASONS = [
   "The way your smile shows up a second before you do",
   "How you laugh at your own jokes before the punchline",
-  "The spark in your eyes when you talk about your dreams",
-  "Your kindness, especially when nobody is watching",
-  "The way you dance around the kitchen like nobody exists",
-  "Your 2 AM playlist — chaotic, perfect, so you",
+  "The glow in your eyes when you talk about your dreams",
+  "Your Confidence , grab any attention",
+  "The way you treat me sometime",
+  "The way you Think for me ",
   "How you remember every tiny detail about the people you love",
-  "The courage you have to be unapologetically yourself",
+  "Talent You have to do all rounder practise.",
   "The warmth of your hand tangled up in mine",
   "How you turn the most ordinary day into a story",
   "Your dreams — big enough to scare you, chased anyway",
-  "The little nose scrunch when something is really funny",
-  "Your heart — the softest, strongest one I know",
+  "The memories spend in 2024, ",
+  "Your Style of presenting yourself",
   "How you believe in me louder than my own doubts",
   "Your voice — my favorite sound in any room",
   "The way strangers leave you feeling like old friends",
@@ -34,7 +34,7 @@ export default function Reasons() {
         <h2 className="text-4xl font-semibold leading-[1.05] tracking-tight text-stone-100 sm:text-6xl">
           <Words text={`20 reasons, ${HER_NAME}`} />
           <br />
-          <Words text="I love you." delay={0.2} />
+          <Words text="I like you most." delay={0.2} />
         </h2>
         <FadeUp delay={0.35} className="pb-2 font-display text-2xl italic text-gold sm:text-3xl">
           — a trailer, really.

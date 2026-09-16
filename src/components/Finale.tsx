@@ -278,7 +278,7 @@ export default function Finale() {
                 <Wind className="h-5 w-5" strokeWidth={2} />
               </motion.span>
               <span className="relative text-balance text-[9px] font-extrabold uppercase tracking-[0.2em] text-gold sm:text-xs sm:tracking-[0.3em]">
-                two gentle blows below
+              blows Your cake below
               </span>
             </div>
 
