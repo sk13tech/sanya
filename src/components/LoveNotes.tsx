@@ -6,7 +6,7 @@ import { playPop, playSparkle } from "../audio/sfx";
 import { HER_NAME, HER_TITLE } from "../config";
 import { EASE, Eyebrow, FadeUp } from "./Reveal";
 
-const HINDI_NOTE = `${HER_NAME} (${HER_TITLE}), You don't Know how I think For you ,for your better future. this is not just 20 it's your 20s golden era to achieve something I wish to God to give you all you needed and pull you out from the struggle you are facing . and remember i will always there for you;
+const HINDI_NOTE = `${HER_NAME} (${HER_TITLE}), तुम मेरी ज़िंदगी की वह खूबसूरत वजह हो, जिसकी वजह से साधारण दिन भी खास लगते हैं। तुम्हारी मुस्कान मेरा सुकून है, तुम्हारी खुशी मेरी सबसे प्यारी दुआ है, और तुम्हारा साथ मेरे लिए घर जैसा है। मैं हर जन्म में तुम्हें ही चुनूँगा।`;
 
 export default function LoveNotes() {
   const [opened, setOpened] = useState(false);
@@ -41,7 +41,7 @@ export default function LoveNotes() {
         <Eyebrow center>only for {HER_NAME} ✨</Eyebrow>
         <h2 className="mt-8 text-4xl font-semibold leading-[1.08] tracking-tight text-stone-100 sm:text-6xl">
           One little{" "}
-          <span className="gold-shimmer pr-2 font-display italic">lovely note. 💌</span>
+          <span className="gold-shimmer pr-2 font-display italic">love note. 💌</span>
         </h2>
         <FadeUp delay={0.25} className="mt-6 max-w-md text-sm leading-relaxed text-stone-400 sm:text-base">
           A quiet piece of my heart, written only for you.
@@ -69,7 +69,7 @@ export default function LoveNotes() {
                 >
                   <Gift className="h-6 w-6" strokeWidth={1.5} />
                 </motion.div>
-                <p className="text-2xl font-medium text-stone-200">Something just only for you 🫵🏻</p>
+                <p className="text-2xl font-medium text-stone-200">Something just for you</p>
                 <p className="text-[10px] font-medium tracking-[0.18em] text-stone-500">
                   tap below to open
                 </p>
@@ -104,7 +104,7 @@ export default function LoveNotes() {
           >
             <span className="absolute inset-0 animate-ping rounded-full border border-gold/35 [animation-duration:2.8s]" />
             <Gift className="h-4 w-4" strokeWidth={1.5} />
-            Open the lovely note
+            Open the love note
           </motion.button>
         )}
       </FadeUp>

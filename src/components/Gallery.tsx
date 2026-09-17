@@ -13,7 +13,7 @@ import { usePhotos } from "../hooks/usePhotos";
 import { HER_NAME } from "../config";
 import { Eyebrow, Words } from "./Reveal";
 
-/** Scroll runway given to each photo. */
+/** Scroll runway given to each detected photo. */
 const VH_PER_PHOTO = 56;
 
 function Frame({
@@ -132,8 +132,7 @@ export default function Gallery() {
   });
   const headOpacity = useTransform(progress, [0, 0.04, 0.9, 1], [1, 1, 1, 0]);
 
-  // Only the current photo and its two neighbours need full-size layers.
-  // This keeps GPU memory stable even when all 10 slots are filled.
+  // only the current photo and its two neighbours keep full-size layers
   useMotionValueEvent(progress, "change", (value) => {
     const next = Math.min(total - 1, Math.floor(Math.max(0, value) * total));
     setActiveIndex((current) => (current === next ? current : next));
@@ -167,7 +166,7 @@ export default function Gallery() {
           style={{ opacity: headOpacity, willChange: "opacity" }}
           className="gallery-heading pointer-events-none absolute inset-x-0 top-[max(1rem,8vh)] z-20 px-4 text-center sm:px-6"
         >
-          <Eyebrow center>{HER_NAME}, in frames 📷</Eyebrow>
+          <Eyebrow center>{HER_NAME} &amp; me, in frames 📷</Eyebrow>
           <h2 className="mt-5 text-3xl font-semibold leading-[1.08] tracking-tight text-stone-50 sm:text-5xl">
             <Words text={`${total} ${total === 1 ? "frame" : "frames"},`} />{" "}
             <span className="gold-shimmer pr-2 font-display italic">

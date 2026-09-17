@@ -6,8 +6,7 @@ import { useBlowDetector } from "../hooks/useBlowDetector";
 import { getMicState, requestMic } from "../audio/micState";
 import { playVocalBirthday } from "../audio/vocalSong";
 import { stopAmbient } from "../audio/ambient";
-import { playBurst, playGreeting, playPop, playWhoosh } from "../audio/sfx";
-import SwipeHint from "./SwipeHint";
+import { playBurst, playGreeting, playWhoosh } from "../audio/sfx";
 import BlowIcon from "./BlowIcon";
 import { AUTHOR_NAME, AUTHOR_NICK, HER_NAME } from "../config";
 import { EASE, Eyebrow, FadeUp } from "./Reveal";
@@ -116,31 +115,31 @@ export default function Finale() {
     }, 900);
   }, []);
 
-  const extinguishOne = (i: number) => {
-    if (!litRef.current[i]) return;
-    playPop(0.3);
-    setLit((prev) => {
-      const next = [...prev];
-      next[i] = false;
-      return next;
-    });
-  };
-
+  /** Manual accessibility fallback: clears every remaining flame using
+      the same three-wave animation as the microphone interaction. */
   const extinguishAll = () => {
-    if (blowBusy.current) return;
+    const litIdx = shuffle(
+      litRef.current.map((isLit, i) => (isLit ? i : -1)).filter((i) => i >= 0)
+    );
+    if (!litIdx.length) return;
+
+    blowBusy.current = true;
     blowNumber.current = MAX_BLOWS;
+    setMicMode(false);
     playWhoosh();
-    const idxs = shuffle(litRef.current.map((l, i) => (l ? i : -1)).filter((i) => i >= 0));
-    const per = Math.max(1, Math.ceil(idxs.length / 3));
-    [0, 1, 2].forEach((k) =>
+
+    const perWave = Math.max(1, Math.ceil(litIdx.length / 3));
+    [0, 1, 2].forEach((wave) => {
       window.setTimeout(() => {
         setLit((prev) => {
           const next = [...prev];
-          idxs.slice(k * per, (k + 1) * per).forEach((i) => (next[i] = false));
+          litIdx
+            .slice(wave * perWave, (wave + 1) * perWave)
+            .forEach((i) => (next[i] = false));
           return next;
         });
-      }, k * 140)
-    );
+      }, 50 + wave * 100);
+    });
   };
 
   const { level, error, supported } = useBlowDetector(micMode && !allOut, extinguishBatch);
@@ -278,7 +277,7 @@ export default function Finale() {
                 <Wind className="h-5 w-5" strokeWidth={2} />
               </motion.span>
               <span className="relative text-balance text-[9px] font-extrabold uppercase tracking-[0.2em] text-gold sm:text-xs sm:tracking-[0.3em]">
-              blows Your cake below
+                two gentle blows below
               </span>
             </div>
 
@@ -331,12 +330,9 @@ export default function Finale() {
               const left = row === 0 ? 7 + column * (86 / 9) : 10 + column * (80 / 9);
 
               return (
-              <button
+              <div
                 key={i}
-                onClick={() => extinguishOne(i)}
-                disabled={!lit[i]}
-                aria-label={`Blow out candle ${i + 1}`}
-                className="group absolute flex cursor-pointer flex-col items-center outline-none disabled:cursor-default"
+                className="absolute flex flex-col items-center"
                 style={{
                   left: `${left}%`,
                   bottom: row === 0 ? 8 : -2,
@@ -384,7 +380,7 @@ export default function Finale() {
                   }}
                 />
                 <span className="absolute -bottom-1 h-2 w-3 rounded-[50%] bg-black/25 blur-[1px]" />
-              </button>
+              </div>
               );
             })}
           </div>
@@ -528,11 +524,11 @@ export default function Finale() {
               onClick={extinguishAll}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="relative inline-flex items-center gap-3 rounded-full border border-gold/40 bg-gold/10 px-8 py-4 text-[11px] font-semibold uppercase tracking-[0.32em] text-gold transition-colors duration-300 hover:bg-gold/20"
+              className="relative inline-flex items-center gap-3 rounded-full border border-gold/40 bg-gold/10 px-7 py-3.5 text-[10px] font-semibold uppercase tracking-[0.28em] text-gold transition-colors duration-300 hover:bg-gold/20 sm:px-8 sm:py-4 sm:text-[11px] sm:tracking-[0.32em]"
             >
-              <span className="absolute inset-0 animate-ping rounded-full border border-gold/40 [animation-duration:2.4s]" />
+              <span className="absolute inset-0 animate-ping rounded-full border border-gold/35 [animation-duration:2.6s]" />
               <Wind className="h-4 w-4" strokeWidth={1.5} />
-              Blow them all out
+              Tap to blow out candles
             </motion.button>
           )}
 
@@ -546,11 +542,10 @@ export default function Finale() {
             </button>
           )}
           {micBlocked && (
-            <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-stone-500">
-              mic unavailable — tap the flames or the button
+            <p className="text-balance text-[10px] font-medium uppercase tracking-[0.3em] text-stone-500">
+              mic unavailable — use the button above
             </p>
           )}
-          {!allOut && <SwipeHint label="tap a flame to blow it out" className="mt-1" />}
         </div>
       ) : (
         <motion.div

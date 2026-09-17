@@ -15,6 +15,7 @@ const CANDIDATES = [
 ];
 
 let current: HTMLAudioElement | null = null;
+let playbackListener: ((playing: boolean) => void) | null = null;
 
 /** Quickly check whether a real audio file exists (never hangs). */
 async function findRecording(): Promise<string | null> {
@@ -35,10 +36,12 @@ async function findRecording(): Promise<string | null> {
 
 export function playVocalBirthday(onState: (playing: boolean) => void) {
   stopVocalBirthday();
+  playbackListener = onState;
 
   findRecording().then((url) => {
     if (!url) {
       onState(false);
+      playbackListener = null;
       return;
     }
     const el = new Audio(url);
@@ -49,6 +52,7 @@ export function playVocalBirthday(onState: (playing: boolean) => void) {
       () => {
         if (current === el) current = null;
         onState(false);
+        playbackListener = null;
       },
       { once: true }
     );
@@ -57,6 +61,7 @@ export function playVocalBirthday(onState: (playing: boolean) => void) {
       () => {
         if (current === el) current = null;
         onState(false);
+        playbackListener = null;
       },
       { once: true }
     );
@@ -64,6 +69,7 @@ export function playVocalBirthday(onState: (playing: boolean) => void) {
     el.play().catch(() => {
       current = null;
       onState(false);
+      playbackListener = null;
     });
   });
 }
@@ -74,4 +80,6 @@ export function stopVocalBirthday() {
     current.src = "";
     current = null;
   }
+  playbackListener?.(false);
+  playbackListener = null;
 }

@@ -64,8 +64,8 @@ export function useBlowDetector(active: boolean, onBlow: () => void) {
           noiseFloor = noiseFloor * 0.94 + rms * 0.06;
           sampleCount++;
         }
-        // Extremely low bar (40% more sensitive than before): even a
-        // barely-audible puff registers. Never needs a hard blow.
+        // Extremely low bar (40% more sensitive): even a barely-audible
+        // puff registers. Never needs a hard blow.
         const threshold = Math.max(0.0084, Math.min(0.0228, noiseFloor * 1.45));
         const norm = Math.min(1, Math.max(0, (rms - noiseFloor) / (threshold * 1.35)));
         setLevel((p) => (Math.abs(p - norm) > 0.02 ? norm : p));
