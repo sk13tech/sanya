@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { micSupported } from "./audio/micState";
 import { startPreload } from "./hooks/usePreload";
+import CountdownGate, { UNLOCK_DATE } from "./components/CountdownGate";
 import Backdrop from "./components/Backdrop";
 import CursorGlow from "./components/CursorGlow";
 import ProgressBar from "./components/ProgressBar";
@@ -26,17 +27,28 @@ import Footer from "./components/Footer";
 type Stage = "gate" | "loader" | "main";
 
 export default function App() {
+  // Locked until midnight — the countdown gate owns the screen.
+  const [locked] = useState(() => Date.now() < UNLOCK_DATE.getTime());
+
   const [stage, setStage] = useState<Stage>(micSupported() ? "gate" : "loader");
 
-  // Warm every photo & font while she reads the microphone screen,
-  // so the whole journey scrolls without a single hitch.
   useEffect(() => {
     startPreload();
   }, []);
 
+  if (locked) {
+    return (
+      <div className="relative min-h-screen bg-ink font-sans text-stone-100">
+        <NoCopy />
+        <CountdownGate onUnlock={() => setTimeout(() => window.location.reload(), 400)} />
+      </div>
+    );
+  }
+
   return (
     <div className="relative min-h-screen bg-ink font-sans text-stone-100">
       <NoCopy />
+
       {stage === "main" && (
         <>
           <Backdrop />
