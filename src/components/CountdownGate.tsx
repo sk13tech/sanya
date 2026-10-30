@@ -5,7 +5,7 @@ import { HER_NAME } from "../config";
 import { EASE } from "./Reveal";
 
 /** Birthday reveal moment: October 26, 2026 at 00:00:20 (local time). */
-export const UNLOCK_DATE = new Date(2026, 9, 30, 10, 34, 0);
+export const UNLOCK_DATE = new Date(2026, 9, 30, 11, 59, 0);
 const FLIP_WINDOW = 4000; // ms before midnight when the "almost opening" cue appears
 
 function pad(n: number): string {
@@ -267,7 +267,7 @@ export default function CountdownGate({ onUnlock }: { onUnlock: () => void }) {
             transition={{ duration: 1, delay: 0.1, ease: EASE }}
             className="mt-12 flex flex-col items-center select-none"
           >
-            <p className="text-[9px] font-semibold uppercase tracking-[0.42em] text-gold/70 sm:text-[10px]">October 26 · twenty twenty-six</p>
+            <p className="text-[9px] font-semibold uppercase tracking-[0.42em] text-gold/70 sm:text-[10px]">October 30 · twenty twenty-six</p>
             <h2 className="gold-shimmer mt-4 select-none pr-2 text-center font-display text-[clamp(3rem,12vw,6rem)] italic leading-none">
               happy birthday
             </h2>
