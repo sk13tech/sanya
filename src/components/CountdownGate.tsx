@@ -5,7 +5,7 @@ import { HER_NAME } from "../config";
 import { EASE } from "./Reveal";
 
 /** Birthday reveal moment: October 26, 2026 at 00:00:20 (local time). */
-export const UNLOCK_DATE = new Date(2026, 9, 26, 0, 31, 0);
+export const UNLOCK_DATE = new Date(2026, 10, 30, 11, 0, 0);
 const FLIP_WINDOW = 4000; // ms before midnight when the "almost opening" cue appears
 
 function pad(n: number): string {
