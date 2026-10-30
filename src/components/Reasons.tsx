@@ -8,9 +8,9 @@ const REASONS = [
   "How you laugh at your own jokes before the punchline",
   "The spark in your eyes when you talk about your dreams",
   "Your kindness, especially when nobody is watching",
-  "The way you dance around the kitchen like nobody exists",
+  "The way you get lost in 2024 Memories - 😊",
   "Your 2 AM playlist — chaotic, perfect, so you",
-  "How you remember every tiny detail about the people you love",
+  "How you remember every tiny detail about the people you care",
   "The courage you have to be unapologetically yourself",
   "The warmth of your hand tangled up in mine",
   "How you turn the most ordinary day into a story",
@@ -23,7 +23,7 @@ const REASONS = [
   "Your stubborn, beautiful hope that things will work out",
   "The way your name became my favorite word in any language",
   "How forever suddenly sounds too short with you",
-  "Simply, endlessly, wonderfully — you",
+  "i wish God You will Defined become - a Profitable Trader 📈.",
 ];
 
 export default function Reasons() {
@@ -34,7 +34,7 @@ export default function Reasons() {
         <h2 className="text-4xl font-semibold leading-[1.05] tracking-tight text-stone-100 sm:text-6xl">
           <Words text={`20 reasons, ${HER_NAME}`} />
           <br />
-          <Words text="I love you." delay={0.2} />
+          <Words text="why you are Best." delay={0.2} />
         </h2>
         <FadeUp delay={0.35} className="pb-2 font-display text-2xl italic text-gold sm:text-3xl">
           — a trailer, really.
