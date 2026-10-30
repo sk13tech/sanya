@@ -210,7 +210,7 @@ export default function CountdownGate({ onUnlock }: { onUnlock: () => void }) {
         <h1 className="mt-6 text-4xl font-semibold leading-[1.05] tracking-tight text-stone-100 sm:text-6xl">
           save <span className="gold-shimmer pr-2 font-display italic">the date</span>
           <span className="block pt-3 pr-2 font-display text-[clamp(2.8rem,11vw,6rem)] italic leading-[0.95] text-stone-50 sm:pt-4">
-            October 26, 2026
+            October 30, 2026
           </span>
         </h1>
 
